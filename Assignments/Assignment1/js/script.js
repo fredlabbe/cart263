@@ -16,6 +16,7 @@ made of ellipses and retangles.
 window.onload = setup;
 const pixelNumber = 1000;
 const delayToReset = 1000;
+let rotation = 0;
 
 function setup() {
   console.log("Document loaded");
@@ -42,5 +43,4 @@ function resetPixel(e){
 }
 function remove(e){
 e.target.style.opacity = "0";
-
 }
