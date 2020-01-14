@@ -28,7 +28,12 @@ function setup() {
   }
 }
 function paint(e){
-  e.target.style.backgroundColor = "white";
+  //having random rbg values for the colors by taking A NUMBER BETWEEN 0 and 1
+  //and multiplying it to the max range which is 255
+  let r = 255*Math.random();
+  let g = 255*Math.random();
+  let b = 255*Math.random();
+  e.target.style.backgroundColor = `rgb(${r},${g},${b})`;
   setTimeout(resetPixel, delayToReset,e);
 }
 function resetPixel(e){
