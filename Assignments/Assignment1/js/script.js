@@ -22,7 +22,8 @@ function setup() {
   for (let i = 0; i < pixelNumber; i++) {
     let pixel = document.createElement("div");
     pixel.setAttribute("class", "pixel");
-    document.addEventListener("mouseover", paint);
+    pixel.addEventListener("mouseover", paint);
+    document.addEventListener("click",remove);
     document.body.appendChild(pixel);
 
   }
@@ -38,4 +39,8 @@ function paint(e){
 }
 function resetPixel(e){
   e.target.style.backgroundColor = "black";
+}
+function remove(e){
+e.target.style.opacity = "0";
+
 }
