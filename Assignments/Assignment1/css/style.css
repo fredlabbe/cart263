@@ -1,0 +1,14 @@
+/*********************************************
+
+Here is a description of any special CSS used.
+In this case it's just padding and margin to 0
+so the canvas is flush with the top left corner.
+
+**********************************************/
+
+.pixel{
+  background-color: black;
+  width: 30px;
+  height:  30px;
+  float: left;
+}
