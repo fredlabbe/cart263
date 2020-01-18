@@ -50,10 +50,13 @@ function rotate(e){
   //left arrow down to rotate left by 1px
   if(e.keyCode === 37){
     let pixels = document.querySelectorAll('.pixel');
+
+// GO SEE WHAT HE DID IN CLASS TO GET THE VALUE AND PARSEFLOAT
+
     for(let i = 0; i < pixels.length; i++){
-      let
-      let currentAngle = document.
-      pixels[i].style.transform
+      //let
+      //let currentAngle = document.
+      //pixels[i].style.transform
     }
   }
   //right arrow down to rotate right by 1px
