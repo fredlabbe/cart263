@@ -1,0 +1,12 @@
+.redacted {
+  background-color: black;
+  color: transparent;
+  user-select: none;
+}
+.revealed{
+  background-color: transparent;
+  color: red;
+}
+.found{
+  background-color: gold;
+}
