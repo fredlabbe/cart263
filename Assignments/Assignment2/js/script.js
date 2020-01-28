@@ -25,6 +25,8 @@ function setup(){
   setInterval(update,intervalValue);
   $spans = $('span')
   $spans.on("click",spanClicked);
+  $secrets = $(".secrets") 
+  secretsTotal = $secrets.length;
 }
 //update()
 //
