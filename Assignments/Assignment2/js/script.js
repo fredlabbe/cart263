@@ -12,9 +12,9 @@ to match your project! Write JavaScript to do amazing things below!
 let $spans;
 //the variable storing the values for the secrets
 let secretsFound;
-let secretsTotal;
+let secretsTotal = 4;
 //the constant storing the value at which the interval will repeat
-const intervalValue = 500;
+const INTERVAL_VALUE = 500;
 //the probability of when to remove the class 10%
 let probability = 0.1;
 $(document).ready(setup);
@@ -22,11 +22,12 @@ $(document).ready(setup);
 //
 //Setting up the program
 function setup(){
-  setInterval(update,intervalValue);
+  setInterval(update,INTERVAL_VALUE);
   $spans = $('span')
   $spans.on("click",spanClicked);
-  $secrets = $(".secrets") 
+  $secrets = $(".secrets")
   secretsTotal = $secrets.length;
+  $secrets.on("mouseover",mouseOver);
 }
 //update()
 //
@@ -54,5 +55,12 @@ function spanClicked(){
   $(this).removeClass("revealed");
   $(this).addClass("redacted");
 
+
+}
+
+//mouseOver()
+//
+//
+function mouseOver(){
 
 }
