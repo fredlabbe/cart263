@@ -2,14 +2,15 @@
 
 /********************************************************************
 
-Title of Project
+The Secret Elven Texts
 Author Name
 
-This is a template. Fill in the title, author, and this description
-to match your project! Write JavaScript to do amazing things below!
+In the text, an ancient elven message is hidden. To translate it, one must
+go to an online elven translator from LOTR
 
 *********************************************************************/
 let $spans;
+let $secrets;
 //the variable storing the values for the secrets
 let secretsFound;
 let secretsTotal = 4;
@@ -23,9 +24,9 @@ $(document).ready(setup);
 //Setting up the program
 function setup(){
   setInterval(update,INTERVAL_VALUE);
-  $spans = $('span')
+  $spans = $('span').not(".secret,#foundSecrets,#totalSecrets");
   $spans.on("click",spanClicked);
-  $secrets = $(".secrets")
+  $secrets = $(".secret");
   secretsTotal = $secrets.length;
   $secrets.on("mouseover",mouseOver);
 }
@@ -61,6 +62,8 @@ function spanClicked(){
 //mouseOver()
 //
 //
-function mouseOver(){
-
+function mouseOver(e){
+  console.log("works");
+  $(this).addClass("foundSecrets");
+  $(this).off();
 }
