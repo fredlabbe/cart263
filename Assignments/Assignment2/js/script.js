@@ -10,10 +10,17 @@ to match your project! Write JavaScript to do amazing things below!
 
 *********************************************************************/
 let $spans;
+//the variable storing the values for the secrets
+let secretsFound;
+let secretsTotal;
+//the constant storing the value at which the interval will repeat
 const intervalValue = 500;
+//the probability of when to remove the class 10%
 let probability = 0.1;
 $(document).ready(setup);
-
+//setup()
+//
+//Setting up the program
 function setup(){
   setInterval(update,intervalValue);
   $spans = $('span')
