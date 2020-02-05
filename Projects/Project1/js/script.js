@@ -16,6 +16,9 @@ let mushX;
 let dialogue;
 let isTripping = false;
 
+// Sound effects for the experience
+let tranceSFX = new Audio("assets/sounds/psytrance.wav");
+
 $(document).ready(setup);
 //setup()
 //
@@ -24,7 +27,10 @@ function setup(){
   $character = $("#character");
   //$character.on("click",move);
   $(document).on("keypress",move);
-  mushX = parseInt($("#mushroom").css("left"))- 100;
+  mushX = parseInt($("#mushroom").css("left")) - 100;
+
+  //looping the buzz sound but not playing it yet
+    tranceSFX.loop = true;
 
 
 
@@ -79,6 +85,7 @@ function createDialog(){
 //
 function trip(){
   console.log("AHH TRIPPING");
+  tranceSFX.play();
   setInterval(shootCircles,100);
   $(".sober").hide();
   $(".tripping").show();
