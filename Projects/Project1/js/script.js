@@ -101,9 +101,19 @@ function shootCircles(){
   //adding the child to the parent
   $(".tripping").append(circle);
   //adding the position to the css
-  $(circle).css("top",`${randY}px`);
-  $(circle).css("left",`${randX}px`);
-  //circle.animate({left: `${randX}`},100);
+  // circle.css("top",`${randY}px`);
+  // circle.css("left",`${randX}px`);
+  // $("div").animate({left: 500},100);
+  setTimeout(reset,5000);
 
+
+}
+function reset(){
+  charPosX = 0
+  $(".tripping").hide();
+  $(".sober").show();
+  isTripping = false;
+  $character.animate({right: 800},10);
+  setTimeout(setup,5000);
 
 }
