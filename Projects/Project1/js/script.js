@@ -79,7 +79,7 @@ function createDialog(){
 //
 function trip(){
   console.log("AHH TRIPPING");
-  setInterval(shootCircles,3000);
+  setInterval(shootCircles,100);
   $(".sober").hide();
   $(".tripping").show();
   $(dialogue).dialog("close");
@@ -104,16 +104,17 @@ function shootCircles(){
   // circle.css("top",`${randY}px`);
   // circle.css("left",`${randX}px`);
   // $("div").animate({left: 500},100);
-  setTimeout(reset,5000);
+  setTimeout(reset,5500);
 
 
 }
 function reset(){
+  location.reload();
   charPosX = 0
   $(".tripping").hide();
   $(".sober").show();
   isTripping = false;
-  $character.animate({right: 800},10);
-  setTimeout(setup,5000);
+  //$character.animate({right: 800},10);
+  //setTimeout(setup,5000);
 
 }
