@@ -151,6 +151,8 @@ let answers = [];
 const NUM_OPTIONS = 4;
 let backwardsText;
 let options;
+let runningScore = 0;
+let isLastRight = false;
 
 function setup() {
   $(document).one("click",newRound);
@@ -164,8 +166,8 @@ function setup() {
    // specified with EVERYTHING it heard from that point on...
    var command = {
      "*I give up": handleGivingUp,
-     "*Say it again": handleSayAgain
-     "I think it's *"
+     "*Say it again": handleSayAgain,
+     "I think it's *animal": handleUserSpeech
    };
 
    // Now we've defined the commands we give them to annyang
@@ -175,8 +177,6 @@ function setup() {
    // Finally we tell annyang to start listening with its
    // .start() function
    annyang.start();
-
-
 }
 }
 //addButton
@@ -189,8 +189,6 @@ function addButton(label) {
   $div.button();
   $('body').append($div);
   $div.on("click",handleGuess);
-
-
 }
 //newRound
 //
@@ -214,10 +212,12 @@ function handleGuess(){
   if($(this).text() === correctAnimal){
     $(".guess").remove();
     setTimeout(newRound,3000);
+    runningScore++;
   }
   else{
     $(this).effect('shake');
     responsiveVoice.speak(backwardsText,"UK English Male", options);
+    runningScore = 0;
 }
 }
 //sayBackwards
@@ -239,6 +239,7 @@ function handleGivingUp(){
   $("div").each(function(){
     if($(this).text() === correctAnimal){
     $(this).effect('shake');
+    runningScore = 0;
     newRound();
     }
   });
@@ -249,4 +250,25 @@ function handleGivingUp(){
 function handleSayAgain(){
   console.log("works");
   responsiveVoice.speak(backwardsText,"UK English Male", options);
+}
+// handleUserSpeech(phrase)
+//
+// Called by annyang when it hears a sentence of the form
+// "I am X". 'phrase' will contain the X part.
+// Checks whether the user said what they were supposed to say
+// and reacts accordingly.
+function handleUserSpeech(phrase) {
+
+  // We check whether the user said what they were told to say
+  // by comparing what annyang heard (phrase) with the
+  // corectAnimal variable
+  if (phrase === correctAnimal) {
+    $(".guess").remove();
+    setTimeout(newRound,3000);
+    runningScore++;
+  }
+  else {
+    // If they said the wrong thing, say the word again
+    responsiveVoice.speak(backwardsText,"UK English Male", options);
+  }
 }
