@@ -163,7 +163,9 @@ function setup() {
    // variable names means that annyang will call the function
    // specified with EVERYTHING it heard from that point on...
    var command = {
-     "*I give up": handleUserSpeech,
+     "*I give up": handleGivingUp,
+     "*Say it again": handleSayAgain
+     "I think it's *"
    };
 
    // Now we've defined the commands we give them to annyang
@@ -230,8 +232,21 @@ function sayBackwards(text){
   };
   responsiveVoice.speak(backwardsText,"UK English Male", options);
 }
-
-function handleUserSpeech(){
+//
+//
+//
+function handleGivingUp(){
+  $("div").each(function(){
+    if($(this).text() === correctAnimal){
+    $(this).effect('shake');
+    newRound();
+    }
+  });
+}
+//
+//
+//
+function handleSayAgain(){
   console.log("works");
-
+  responsiveVoice.speak(backwardsText,"UK English Male", options);
 }
