@@ -154,6 +154,28 @@ let options;
 
 function setup() {
   $(document).one("click",newRound);
+  // Make sure annyang is available...
+ if (annyang) {
+   console.log("supported");
+   // Add the commands to annyang. That is it should listen
+   // for "I am..." or "I'm..." followed by some number of words.
+   // In annyang's commands an asterisk (*) followed by a
+   // variable names means that annyang will call the function
+   // specified with EVERYTHING it heard from that point on...
+   var command = {
+     "*I give up": handleUserSpeech,
+   };
+
+   // Now we've defined the commands we give them to annyang
+   // by using its .addCommands() function.
+   annyang.addCommands(command);
+
+   // Finally we tell annyang to start listening with its
+   // .start() function
+   annyang.start();
+
+
+}
 }
 //addButton
 //
@@ -207,4 +229,9 @@ function sayBackwards(text){
     pitch: Math.random()
   };
   responsiveVoice.speak(backwardsText,"UK English Male", options);
+}
+
+function handleUserSpeech(){
+  console.log("works");
+
 }
