@@ -221,6 +221,7 @@ function handleGuess(){
   else{
     $(this).effect('shake');
     responsiveVoice.speak(backwardsText,"UK English Male", options);
+    runningScore = 0;
     //displaying the score
     displayScore();
 }
@@ -279,6 +280,9 @@ function handleUserSpeech(phrase) {
   else {
     // If they said the wrong thing, say the word again
     responsiveVoice.speak(backwardsText,"UK English Male", options);
+    runningScore = 0;
+    //displaying the score
+    displayScore();
   }
 }
 function displayScore(){
