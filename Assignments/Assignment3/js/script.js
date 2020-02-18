@@ -177,6 +177,8 @@ function setup() {
    // Finally we tell annyang to start listening with its
    // .start() function
    annyang.start();
+   //displaying the score
+   displayScore();
 }
 }
 //addButton
@@ -213,11 +215,14 @@ function handleGuess(){
     $(".guess").remove();
     setTimeout(newRound,3000);
     runningScore++;
+    //displaying the score
+    displayScore();
   }
   else{
     $(this).effect('shake');
     responsiveVoice.speak(backwardsText,"UK English Male", options);
-    runningScore = 0;
+    //displaying the score
+    displayScore();
 }
 }
 //sayBackwards
@@ -240,6 +245,8 @@ function handleGivingUp(){
     if($(this).text() === correctAnimal){
     $(this).effect('shake');
     runningScore = 0;
+    //displaying the score
+    displayScore();
     newRound();
     }
   });
@@ -266,9 +273,14 @@ function handleUserSpeech(phrase) {
     $(".guess").remove();
     setTimeout(newRound,3000);
     runningScore++;
+    //displaying the score
+    displayScore();
   }
   else {
     // If they said the wrong thing, say the word again
     responsiveVoice.speak(backwardsText,"UK English Male", options);
   }
+}
+function displayScore(){
+  $("h1").text(`Score: ${runningScore}`);
 }
