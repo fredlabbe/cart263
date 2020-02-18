@@ -108,7 +108,7 @@ function update() {
   //     // Jumping just means setting an upward velocity.
   //     // Remember we set up gravity right at the beginning, so that will cause
   //     // the player to fall appropriately.
-  //     player.setVelocityY(-330);
+  //     player.setVelocityY(-330); 
   //   }
 
 }
