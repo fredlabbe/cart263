@@ -20,6 +20,7 @@ author, and this description to match your project!
 // in the object.
 let player
 let platforms;
+let spikes;
 let cursors;
 let background;
 var config = {
@@ -59,6 +60,7 @@ var game = new Phaser.Game(config);
 function preload() {
   this.load.image('sky', 'assets/images/sky.png');
   this.load.image('ground', 'assets/images/platform.png');
+  this.load.image('spikes', 'assets/images/spikes.png');
   this.load.spritesheet('character', 'assets/images/bunny.png', { frameWidth: 31, frameHeight: 28 });
 
 }
@@ -79,7 +81,13 @@ function create() {
   platforms.create(450, 400,'ground').refreshBody();
   platforms.create(1100, 450,'ground').refreshBody();
   platforms.create(1600, 270,'ground').refreshBody();
+
+  //the spikes
+  spikes = this.physics.add.staticGroup();
+  spikes.create(1400, 580, 'spikes').setScale(0.4).refreshBody();
+
   player = this.physics.add.sprite(100, 150, 'character');
+  player.setScale(1.5);
   player.setBounce(0.2);
   //player.setCollideWorldBounds(true);
 
@@ -120,12 +128,13 @@ function create() {
  cursors = this.input.keyboard.createCursorKeys();
  //the camera
  // set bounds so the camera won't go outside the game world
-    this.cameras.main.setBounds(0, 0, 2000, 600);
+    this.cameras.main.setBounds(0, 0, 10000, 600);
 
  // make the camera follow the player
     this.cameras.main.startFollow(player);
 
  this.physics.add.collider(player, platforms);
+ this.physics.add.collider(player, spikes);
 
 
 }
@@ -169,4 +178,11 @@ function update() {
     player.setVelocityY(-330);
   }
 
+  if(overlap(player,spikes)){
+    playerDying();
+  }
+}
+
+function playerDying(){
+  console.log("died");
 }
