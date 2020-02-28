@@ -178,9 +178,9 @@ function update() {
     player.setVelocityY(-330);
   }
 
-  if(overlap(player,spikes)){
-    playerDying();
-  }
+  // if(overlap(player,spikes)){
+  //   playerDying();
+  // }
 }
 
 function playerDying(){
