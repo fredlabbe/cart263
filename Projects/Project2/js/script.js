@@ -12,6 +12,8 @@ author, and this description to match your project!
 
 //PARTICLES: https://phaser.io/examples/v2/particles/click-burst
 //           https://phaser.io/examples/v3/search?search=particle
+
+// platformer example: https://gamedevacademy.org/how-to-make-a-mario-style-platformer-with-phaser-3/
 //
 // In Phaser we create an object literal to store the configuration
 // options we'll use to create the game. Each option is a property
@@ -74,6 +76,9 @@ function create() {
 
   platforms = this.physics.add.staticGroup();
   platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+  platforms.create(450, 400,'ground').refreshBody();
+  platforms.create(1100, 450,'ground').refreshBody();
+  platforms.create(1600, 270,'ground').refreshBody();
   player = this.physics.add.sprite(100, 150, 'character');
   player.setBounce(0.2);
   //player.setCollideWorldBounds(true);
