@@ -9,6 +9,10 @@ This is a template. You must fill in the title,
 author, and this description to match your project!
 
 ******************/
+
+//PARTICLES: https://phaser.io/examples/v2/particles/click-burst
+//           https://phaser.io/examples/v3/search?search=particle
+//
 // In Phaser we create an object literal to store the configuration
 // options we'll use to create the game. Each option is a property
 // in the object.
@@ -52,7 +56,7 @@ var game = new Phaser.Game(config);
 function preload() {
   this.load.image('sky', 'assets/images/sky.png');
   this.load.image('ground', 'assets/images/platform.png');
-  this.load.spritesheet('character', 'assets/images/stickman.png', { frameWidth: 64, frameHeight: 64 });
+  this.load.spritesheet('character', 'assets/images/bunny.png', { frameWidth: 31, frameHeight: 28 });
 
 }
 
@@ -63,7 +67,7 @@ function preload() {
 
 function create() {
   cursors = this.input.keyboard.createCursorKeys();
-  this.add.sprite(400,300,'sky');
+  this.add.image(400,300,'sky');
 
   platforms = this.physics.add.staticGroup();
   platforms.create(400, 568, 'ground').setScale(2).refreshBody();
@@ -71,7 +75,43 @@ function create() {
   player.setBounce(0.2);
   player.setCollideWorldBounds(true);
 
-  this.physics.add.collider(player, platforms);
+
+  // First a walking animation. We use this.anims.create to create animations, passing an object
+ // literal with the options
+ this.anims.create({
+   // As with all these kinds of things we give it a key (a name)
+   key: 'left',
+   // We specify the frames as an array, but we use generateFrameNumbers() to take care of it for us
+   // It will generate frames between the start and end numbers for the specified key
+   frames: this.anims.generateFrameNumbers('character', { start: 0, end: 3 }),
+   // How fast it should play
+   frameRate: 10,
+   // How many times it should repeat after finishing (-1 means loop infinitely)
+   repeat: -1
+ });
+
+ // The turn animation is when the "dude" is facing forwards
+ this.anims.create({
+   key: 'turn',
+   // Here we can see an example of a non-generated frame - just the one frame object with a key and frame
+   frames: [ { key: 'character', frame: 3 } ],
+   frameRate: 20
+ });
+
+ // And the rightward walking animation is similar to the leftward one
+ // Note that in this case the left and right walking animations are two separate sets of images
+ // in the spritesheet. Often you would see just one set and using other techniques to flip
+ // the image in the opposite direction to create the other set.
+ this.anims.create({
+   key: 'right',
+   frames: this.anims.generateFrameNumbers('character', { start: 4, end: 6 }),
+   frameRate: 10,
+   repeat: -1
+ });
+
+ cursors = this.input.keyboard.createCursorKeys();
+
+ this.physics.add.collider(player, platforms);
 
 
 }
@@ -82,35 +122,37 @@ function create() {
 //
 
 function update() {
-  // if (cursors.left.isDown) {
-  //     // setVelocityX will start the player moving at that number of pixels per second
-  //     // We don't need to do anything more than this
-  //     player.setVelocityX(-160);
-  //     // We play an animation using the sprite's anims property and giving it the appropriate animation key
-  //     player.anims.play('left', true);
-  //   }
-  //   else if (cursors.right.isDown) {
-  //     // Similarly for right
-  //     player.setVelocityX(160);
-  //     player.anims.play('right', true);
-  //   }
-  //   else {
-  //     // If neither left nor right is pressed the player should stop
-  //     // so we set its velocity to 0 and turn it to face the front
-  //     player.setVelocityX(0);
-  //     player.anims.play('turn');
-  //   }
-  //
-  //   // Slightly more fancy for jumping
-  //   // We check if the up key is down
-  //   // And we also check on the player's 'body' property (its physics body)
-  //   // whether it is touching something in the dowards direction.
-  //   // This means it will only jump if it is standing on something. Nice!
-  //   if (cursors.up.isDown && player.body.touching.down) {
-  //     // Jumping just means setting an upward velocity.
-  //     // Remember we set up gravity right at the beginning, so that will cause
-  //     // the player to fall appropriately.
-  //     player.setVelocityY(-330);
-  //   }
+  // Now we can check the cursors keys to see if they're down one by one
+  // In each case we set the appropriate velocity and play the appropriate animation
+  if (cursors.left.isDown) {
+    // setVelocityX will start the player moving at that number of pixels per second
+    // We don't need to do anything more than this
+    player.setVelocityX(-160);
+    // We play an animation using the sprite's anims property and giving it the appropriate animation key
+    player.anims.play('left', true);
+  }
+  else if (cursors.right.isDown) {
+    // Similarly for right
+    player.setVelocityX(160);
+    player.anims.play('right', true);
+  }
+  else {
+    // If neither left nor right is pressed the player should stop
+    // so we set its velocity to 0 and turn it to face the front
+    player.setVelocityX(0);
+    player.anims.play('turn');
+  }
+
+  // Slightly more fancy for jumping
+  // We check if the up key is down
+  // And we also check on the player's 'body' property (its physics body)
+  // whether it is touching something in the dowards direction.
+  // This means it will only jump if it is standing on something. Nice!
+  if (cursors.up.isDown && player.body.touching.down) {
+    // Jumping just means setting an upward velocity.
+    // Remember we set up gravity right at the beginning, so that will cause
+    // the player to fall appropriately.
+    player.setVelocityY(-330);
+  }
 
 }
