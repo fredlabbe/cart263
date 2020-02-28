@@ -50,6 +50,7 @@ var game = new Phaser.Game(config);
 // Description of preload
 
 function preload() {
+  this.load.image('sky', 'assets/images/sky.png');
   this.load.image('ground', 'assets/images/platform.png');
   this.load.spritesheet('character', 'assets/images/stickman.png', { frameWidth: 64, frameHeight: 64 });
 
@@ -62,6 +63,7 @@ function preload() {
 
 function create() {
   cursors = this.input.keyboard.createCursorKeys();
+  this.add.sprite(400,300,'sky');
 
   platforms = this.physics.add.staticGroup();
   platforms.create(400, 568, 'ground').setScale(2).refreshBody();
@@ -108,7 +110,7 @@ function update() {
   //     // Jumping just means setting an upward velocity.
   //     // Remember we set up gravity right at the beginning, so that will cause
   //     // the player to fall appropriately.
-  //     player.setVelocityY(-330); 
+  //     player.setVelocityY(-330);
   //   }
 
 }
