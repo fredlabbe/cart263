@@ -83,7 +83,7 @@ function create() {
    key: 'left',
    // We specify the frames as an array, but we use generateFrameNumbers() to take care of it for us
    // It will generate frames between the start and end numbers for the specified key
-   frames: this.anims.generateFrameNumbers('character', { start: 0, end: 3 }),
+   frames: this.anims.generateFrameNumbers('character', { start: 0, end: 2 }),
    // How fast it should play
    frameRate: 10,
    // How many times it should repeat after finishing (-1 means loop infinitely)
