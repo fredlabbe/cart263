@@ -19,6 +19,7 @@ author, and this description to match your project!
 let player
 let platforms;
 let cursors;
+let background;
 var config = {
   // The renderer to be used: CANVAS, WEBGL, AUTO)
   type: Phaser.AUTO,
@@ -67,13 +68,15 @@ function preload() {
 
 function create() {
   cursors = this.input.keyboard.createCursorKeys();
-  this.add.image(400,300,'sky');
+  background = this.add.sprite(400,300,'sky');
+  background.immovable = true;
+
 
   platforms = this.physics.add.staticGroup();
   platforms.create(400, 568, 'ground').setScale(2).refreshBody();
   player = this.physics.add.sprite(100, 150, 'character');
   player.setBounce(0.2);
-  player.setCollideWorldBounds(true);
+  //player.setCollideWorldBounds(true);
 
 
   // First a walking animation. We use this.anims.create to create animations, passing an object
@@ -110,6 +113,12 @@ function create() {
  });
 
  cursors = this.input.keyboard.createCursorKeys();
+ //the camera
+ // set bounds so the camera won't go outside the game world
+    this.cameras.main.setBounds(0, 0, 2000, 600);
+
+ // make the camera follow the player
+    this.cameras.main.startFollow(player);
 
  this.physics.add.collider(player, platforms);
 
