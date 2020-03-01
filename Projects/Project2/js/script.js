@@ -3,7 +3,7 @@
 /*****************
 
 Title of Project
-Author Name
+Frederick Labbe
 
 This is a template. You must fill in the title,
 author, and this description to match your project!
@@ -15,9 +15,7 @@ author, and this description to match your project!
 
 // platformer example: https://gamedevacademy.org/how-to-make-a-mario-style-platformer-with-phaser-3/
 //
-// In Phaser we create an object literal to store the configuration
-// options we'll use to create the game. Each option is a property
-// in the object.
+
 let player
 let platforms;
 let spikes;
@@ -26,6 +24,8 @@ let background;
 
 // The specific voice we want the computer to use
 let voice = 'UK English Female';
+// The screaming in pain sound
+let screamSFX = new Audio("assets/sounds/scream.wav");
 
 // The parameters for the voice in an object
 let voiceParameters = {
@@ -146,6 +146,9 @@ function create() {
  this.physics.add.collider(player, platforms);
  this.physics.add.collider(player, spikes, hitSpikes, null, this);
 
+//Saying to find al the carrots in a creepy high pitched voice
+ setTimeout(say("I... must find all the carrots..."), 2000);
+
 
 }
 
@@ -169,7 +172,6 @@ function update() {
     player.setVelocityX(160);
     player.anims.play('right', true);
 
-    say("You must find all the carrots!");
   }
   else {
     // If neither left nor right is pressed the player should stop
@@ -199,6 +201,7 @@ function update() {
 // Function called if the player collides with a spikes. Automatically passed the player and the spikes.
 function hitSpikes(){
   player.setTint(0xff0000);
+  screamSFX.play();
 }
 
 // say(text)
