@@ -23,6 +23,16 @@ let platforms;
 let spikes;
 let cursors;
 let background;
+
+// The specific voice we want the computer to use
+let voice = 'UK English Female';
+
+// The parameters for the voice in an object
+let voiceParameters = {
+  pitch: 2,
+  rate: 0.6,
+  volume: 1
+}
 var config = {
   // The renderer to be used: CANVAS, WEBGL, AUTO)
   type: Phaser.AUTO,
@@ -134,7 +144,7 @@ function create() {
     this.cameras.main.startFollow(player);
 
  this.physics.add.collider(player, platforms);
- this.physics.add.collider(player, spikes);
+ this.physics.add.collider(player, spikes, hitSpikes, null, this);
 
 
 }
@@ -158,6 +168,8 @@ function update() {
     // Similarly for right
     player.setVelocityX(160);
     player.anims.play('right', true);
+
+    say("You must find all the carrots!");
   }
   else {
     // If neither left nor right is pressed the player should stop
@@ -182,7 +194,16 @@ function update() {
   //   playerDying();
   // }
 }
+// hitSpikes(player,spikes)
+//
+// Function called if the player collides with a spikes. Automatically passed the player and the spikes.
+function hitSpikes(){
+  player.setTint(0xff0000);
+}
 
-function playerDying(){
-  console.log("died");
+// say(text)
+//
+// Speaks the text given with the parameters determined at the top of the script.
+function say (text) {
+  responsiveVoice.speak(text,voice,voiceParameters);
 }
