@@ -21,6 +21,7 @@ let platforms;
 let spikes;
 let cursors;
 let background;
+let isDying = false;
 
 // The specific voice we want the computer to use
 let voice = 'UK English Female';
@@ -192,21 +193,31 @@ function update() {
     player.setVelocityY(-330);
   }
 
-  // if(overlap(player,spikes)){
-  //   playerDying();
-  // }
 }
 // hitSpikes(player,spikes)
 //
 // Function called if the player collides with a spikes. Automatically passed the player and the spikes.
 function hitSpikes(){
+  isDying = true;
   player.setTint(0xff0000);
-  screamSFX.play();
+  if(isDying === true){
+    this.input.enable = false;
+    screamSFX.play();
+    setTimeout(restart,8000);
+  }
 }
 
 // say(text)
 //
 // Speaks the text given with the parameters determined at the top of the script.
-function say (text) {
+function say(text) {
   responsiveVoice.speak(text,voice,voiceParameters);
+}
+
+function restart(){
+  screamSFX.pause();
+  isDying = false;
+  // this.cameras.main.fade(500, 0, 0, 0);
+  // this.cameras.main.shake(250, 0.01);
+
 }
