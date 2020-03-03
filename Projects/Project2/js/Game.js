@@ -9,16 +9,21 @@ class Game extends Phaser.Scene{
     this.player;
     this.platforms;
     this.spikes;
+    this.carrots;
     this.cursors;
     this.background;
     this.isDying = false;
     this.emitter;
-
+    this.score = 0;
+    this.scoreText = `Carrots found: ${this.score}`
     // The specific voice we want the computer to use
     this.voice = 'UK English Female';
     // The screaming in pain sound
     this.screamSFX = new Audio("assets/sounds/scream.wav");
+    //the music
     this.musicSFX = new Audio("assets/sounds/happyLoop.wav");
+    //the horror sound
+    this.horrorSFX = new Audio("assets/sounds/horrorSound.wav");
 
     // The parameters for the voice in an object
     this.voiceParameters = {
@@ -42,30 +47,41 @@ class Game extends Phaser.Scene{
   // Sets up the game
 
   create() {
+    //playing the music not too loud
     this.musicSFX.play();
     this.musicSFX.volume = 0.2;
     this.musicSFX.loop = true;
+
+    //setting up the cursors
     this.cursors = this.input.keyboard.createCursorKeys();
+
+    //setting up a background that follows the player
     this.background = this.add.sprite(400,300,'sky');
     this.background.setScrollFactor(0);
 
-
+    //the platforms
     this.platforms = this.physics.add.staticGroup();
     this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
     this.platforms.create(450, 400,'ground').refreshBody();
     this.platforms.create(1100, 450,'ground').refreshBody();
     this.platforms.create(1600, 270,'ground').refreshBody();
 
+    //the carrots
+    this.carrots = this.physics.add.group({
+    key: 'carrot',
+    repeat: 11,
+    setXY: { x: 12, y: 0, stepX: 300 }
+  });
+
     //the spikes
     this.spikes = this.physics.add.staticGroup();
     this.spikes.create(1400, 580, 'spikes').setScale(0.4).refreshBody();
-
+    //the player
     this.player = this.physics.add.sprite(100, 150, 'character');
     this.player.setScale(1.5);
     this.player.setBounce(0.2);
-    //player.setCollideWorldBounds(true);
 
-
+    //creating the cursors
    this.cursors = this.input.keyboard.createCursorKeys();
    //the camera
    // set bounds so the camera won't go outside the game world
@@ -75,7 +91,11 @@ class Game extends Phaser.Scene{
    this.cameras.main.startFollow(this.player);
 
    this.physics.add.collider(this.player, this.platforms);
+   this.physics.add.collider(this.carrots, this.platforms);
    this.physics.add.collider(this.player, this.spikes, this.hitSpikes, null, this);
+
+   //collecting the carrots
+   this.physics.add.overlap(this.player, this.carrots, this.collectCarrots, null, this)
 
   //Saying to find al the carrots in a creepy high pitched voice
    setTimeout(this.say, 2000,"I... must find all the carrots...",this.voice,this.voiceParameters);
@@ -109,39 +129,43 @@ class Game extends Phaser.Scene{
       this.player.anims.play('turn');
     }
 
-    // Slightly more fancy for jumping
-    // We check if the up key is down
-    // And we also check on the player's 'body' property (its physics body)
-    // whether it is touching something in the dowards direction.
-    // This means it will only jump if it is standing on something. Nice!
+    //checking if the up key is pressed and if the body is touching something to
+    //jump
     if (this.cursors.up.isDown && this.player.body.touching.down) {
-      // Jumping just means setting an upward velocity.
-      // Remember we set up gravity right at the beginning, so that will cause
-      // the player to fall appropriately.
       this.player.setVelocityY(-330);
     }
 
   }
   // hitSpikes(player,spikes)
   //
-  // Function called if the player collides with a spikes. Automatically passed the player and the spikes.
+  // Function called if the player collides with a spikes. Automatically passed
+  //the player and the spikes. Blood spits everywhere because of the emitter.
+  //the sky becomes red and horrible sounds are heard
   hitSpikes(){
     this.musicSFX.pause();
-    this.player.setTint(0xff0000);
+    this.horrorSFX.play();
+    //setting the sky red
+    this.background.setTint(0xff0000);
     if(this.isDying === false){
-      this.input.enable = false;
+      //disabling the player's movement because dead
+      //this.input.enable = false;
+      //painful screams
       this.screamSFX.play();
+      //respawning and resetting the scene after 8 seconds
       setTimeout(() => {
+        //re-enabling the player movement
+        this.input.keyboard.enabled = true;
+        this.horrorSFX.pause();
         this.scene.restart();
+        this.score = 0;
       },8000);
-      //adding the blood
+      //adding the blood as an emitter that emits several times the same image
       let particles = this.add.particles('blood');
       this.emitter = particles.createEmitter();
       this.emitter.setPosition(this.player.x,this.player.y);
       this.emitter.setSpeed(50);
       this.input.keyboard.enabled = false;
       this.isDying = true;
-      //particleBurst(player);
     }
   }
 
@@ -151,20 +175,16 @@ class Game extends Phaser.Scene{
   say(text,voice,params) {
     responsiveVoice.speak(text,voice,params);
   }
+// collectCarrots
+//
+// This function is called when the player and a star overlap. It will automatically
+// receive arguments containing the player and the specific carrot they touched.
+collectCarrots (player,carrot) {
+  //taking the carrot out of the screen
+  carrot.disableBody(true, true);
 
-  // function restart(){
-  //   screamSFX.pause();
-  //   isDying = false;
-  //   // this.cameras.main.fade(500, 0, 0, 0);
-  //   // this.cameras.main.shake(250, 0.01);
-  //
-  // }
-  // particleBurst(player){
-  //   emitter.x = player.x;
-  //   emitter.y = player.y;
-  //
-  //   emitter.start(true, 2000, null, 10);
-  //
-  // }
-
+  //increase and update the score
+  this.score += 10;
+  //this.scoreText.setText(`Carrots found: ${this.score}`);
+}
 }

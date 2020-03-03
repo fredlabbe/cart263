@@ -2,20 +2,16 @@
 
 /*****************
 
-Title of Project
+A Children Game?
 Frederick Labbe
 
-This is a template. You must fill in the title,
-author, and this description to match your project!
+This is a platformer that looks all cute and nice at the beginning. The player
+is immersed in a pink and cute world where the player is a rabbit that must
+collect carrots. However, when the player falls on spikes, blood spits
+everywhere and everything turns gore...
 
 ******************/
-
-//PARTICLES: https://phaser.io/examples/v2/particles/click-burst
-//           https://phaser.io/examples/v3/search?search=particle
-
-// platformer example: https://gamedevacademy.org/how-to-make-a-mario-style-platformer-with-phaser-3/
-//
-
+//setting up the configuration of the game
 var config = {
   // The renderer to be used: CANVAS, WEBGL, AUTO)
   type: Phaser.AUTO,
