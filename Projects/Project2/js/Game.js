@@ -1,11 +1,11 @@
 //import { Scene } from 'Phaser'
 
-class Game extends Phaser.Scene{
+class Game extends Phaser.Scene {
 
-  constructor(){
+  constructor() {
     super('Game');
   }
-  init(data){
+  init(data) {
     this.player;
     this.platforms;
     this.spikes;
@@ -56,23 +56,27 @@ class Game extends Phaser.Scene{
     this.cursors = this.input.keyboard.createCursorKeys();
 
     //setting up a background that follows the player
-    this.background = this.add.sprite(400,300,'sky');
+    this.background = this.add.sprite(400, 300, 'sky');
     this.background.setScrollFactor(0);
 
     //the platforms
     this.platforms = this.physics.add.staticGroup();
     this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-    this.platforms.create(450, 400,'ground').refreshBody();
-    this.platforms.create(1100, 450,'ground').refreshBody();
-    this.platforms.create(1600, 270,'ground').refreshBody();
+    this.platforms.create(450, 400, 'ground').refreshBody();
+    this.platforms.create(1100, 450, 'ground').refreshBody();
+    this.platforms.create(1600, 270, 'ground').refreshBody();
     this.platforms.create(2700, 568, 'ground').setScale(2).refreshBody();
 
     //the carrots
     this.carrots = this.physics.add.group({
-    key: 'carrot',
-    repeat: 14,
-    setXY: { x: 12, y: 0, stepX: 300 }
-  });
+      key: 'carrot',
+      repeat: 14,
+      setXY: {
+        x: 12,
+        y: 0,
+        stepX: 300
+      }
+    });
 
     //the spikes
     this.spikes = this.physics.add.staticGroup();
@@ -83,23 +87,23 @@ class Game extends Phaser.Scene{
     this.player.setBounce(0.2);
 
     //creating the cursors
-   this.cursors = this.input.keyboard.createCursorKeys();
-   //the camera
-   // set bounds so the camera won't go outside the game world
-   this.cameras.main.setBounds(0, 0, 10000, 600);
+    this.cursors = this.input.keyboard.createCursorKeys();
+    //the camera
+    // set bounds so the camera won't go outside the game world
+    this.cameras.main.setBounds(0, 0, 10000, 600);
 
-   // make the camera follow the player
-   this.cameras.main.startFollow(this.player);
+    // make the camera follow the player
+    this.cameras.main.startFollow(this.player);
 
-   this.physics.add.collider(this.player, this.platforms);
-   this.physics.add.collider(this.carrots, this.platforms);
-   this.physics.add.collider(this.player, this.spikes, this.hitSpikes, null, this);
+    this.physics.add.collider(this.player, this.platforms);
+    this.physics.add.collider(this.carrots, this.platforms);
+    this.physics.add.collider(this.player, this.spikes, this.hitSpikes, null, this);
 
-   //collecting the carrots
-   this.physics.add.overlap(this.player, this.carrots, this.collectCarrots, null, this)
+    //collecting the carrots
+    this.physics.add.overlap(this.player, this.carrots, this.collectCarrots, null, this)
 
-  //Saying to find al the carrots in a creepy high pitched voice
-   setTimeout(this.say, 2000,"I... must find all the carrots...",this.voice,this.voiceParameters);
+    //Saying to find al the carrots in a creepy high pitched voice
+    setTimeout(this.say, 2000, "I... must find all the carrots...", this.voice, this.voiceParameters);
   }
 
 
@@ -117,14 +121,12 @@ class Game extends Phaser.Scene{
       this.player.setVelocityX(-160);
       // We play an animation using the sprite's anims property and giving it the appropriate animation key
       this.player.anims.play('left', true);
-    }
-    else if (this.cursors.right.isDown) {
+    } else if (this.cursors.right.isDown) {
       // Similarly for right
       this.player.setVelocityX(160);
       this.player.anims.play('right', true);
 
-    }
-    else {
+    } else {
       // If neither left nor right is pressed the player should stop
       // so we set its velocity to 0 and turn it to face the front
       this.player.setVelocityX(0);
@@ -137,14 +139,14 @@ class Game extends Phaser.Scene{
       this.player.setVelocityY(-330);
     }
     //restarting the game if the player falls off.. not gore yet!
-    if(this.player.x < 0 || this.player.y > 600){
+    if (this.player.x < 0 || this.player.y > 600) {
       this.scene.restart();
     }
     //changing the background to be darker as the player advances in the game
-    if(this.player.x > 800 && this.player.x < 1386){
+    if (this.player.x > 800 && this.player.x < 1386) {
       this.background.setTint(0xc4c4c4);
     }
-    if(this.player.x > 1386 && this.player.x < 2000){
+    if (this.player.x > 1386 && this.player.x < 2000) {
       this.background.setTint(0x8e8e8e);
     }
     console.log(this.player.x);
@@ -155,12 +157,12 @@ class Game extends Phaser.Scene{
   // Function called if the player collides with a spikes. Automatically passed
   //the player and the spikes. Blood spits everywhere because of the emitter.
   //the sky becomes red and horrible sounds are heard
-  hitSpikes(){
+  hitSpikes() {
     this.musicSFX.pause();
     this.horrorSFX.play();
     //setting the sky red
     this.background.setTint(0xff0000);
-    if(this.isDying === false){
+    if (this.isDying === false) {
       //disabling the player's movement because dead
       this.input.enabled = false;
       //painful screams
@@ -171,11 +173,11 @@ class Game extends Phaser.Scene{
         this.input.keyboard.enabled = true;
         this.horrorSFX.pause();
         this.scene.restart();
-      },8000);
+      }, 8000);
       //adding the blood as an emitter that emits several times the same image
       let particles = this.add.particles('blood');
       this.emitter = particles.createEmitter();
-      this.emitter.setPosition(this.player.x,this.player.y);
+      this.emitter.setPosition(this.player.x, this.player.y);
       this.emitter.setSpeed(50);
       this.input.keyboard.enabled = false;
       this.isDying = true;
@@ -185,18 +187,18 @@ class Game extends Phaser.Scene{
   // say(text)
   //
   // Speaks the text given with the parameters determined at the top of the script.
-  say(text,voice,params) {
-    responsiveVoice.speak(text,voice,params);
+  say(text, voice, params) {
+    responsiveVoice.speak(text, voice, params);
   }
-// collectCarrots
-//
-// This function is called when the player and a star overlap. It will automatically
-// receive arguments containing the player and the specific carrot they touched.
-collectCarrots (player,carrot) {
-  //taking the carrot out of the screen
-  carrot.disableBody(true, true);
+  // collectCarrots
+  //
+  // This function is called when the player and a star overlap. It will automatically
+  // receive arguments containing the player and the specific carrot they touched.
+  collectCarrots(player, carrot) {
+    //taking the carrot out of the screen
+    carrot.disableBody(true, true);
 
-  //increase and update the score
-  this.score += 10;
-}
+    //increase and update the score
+    this.score += 10;
+  }
 }
