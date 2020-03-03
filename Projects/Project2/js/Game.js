@@ -65,11 +65,12 @@ class Game extends Phaser.Scene{
     this.platforms.create(450, 400,'ground').refreshBody();
     this.platforms.create(1100, 450,'ground').refreshBody();
     this.platforms.create(1600, 270,'ground').refreshBody();
+    this.platforms.create(2700, 568, 'ground').setScale(2).refreshBody();
 
     //the carrots
     this.carrots = this.physics.add.group({
     key: 'carrot',
-    repeat: 11,
+    repeat: 14,
     setXY: { x: 12, y: 0, stepX: 300 }
   });
 
@@ -104,6 +105,7 @@ class Game extends Phaser.Scene{
 
   // update()
   //
+  //keeping track of the user input and if the player falls off the game space (restarts).
   //
 
   update() {
@@ -134,6 +136,18 @@ class Game extends Phaser.Scene{
     if (this.cursors.up.isDown && this.player.body.touching.down) {
       this.player.setVelocityY(-330);
     }
+    //restarting the game if the player falls off.. not gore yet!
+    if(this.player.x < 0 || this.player.y > 600){
+      this.scene.restart();
+    }
+    //changing the background to be darker as the player advances in the game
+    if(this.player.x > 800 && this.player.x < 1386){
+      this.background.setTint(0xc4c4c4);
+    }
+    if(this.player.x > 1386 && this.player.x < 2000){
+      this.background.setTint(0x8e8e8e);
+    }
+    console.log(this.player.x);
 
   }
   // hitSpikes(player,spikes)
@@ -148,7 +162,7 @@ class Game extends Phaser.Scene{
     this.background.setTint(0xff0000);
     if(this.isDying === false){
       //disabling the player's movement because dead
-      //this.input.enable = false;
+      this.input.enabled = false;
       //painful screams
       this.screamSFX.play();
       //respawning and resetting the scene after 8 seconds
@@ -157,7 +171,6 @@ class Game extends Phaser.Scene{
         this.input.keyboard.enabled = true;
         this.horrorSFX.pause();
         this.scene.restart();
-        this.score = 0;
       },8000);
       //adding the blood as an emitter that emits several times the same image
       let particles = this.add.particles('blood');
@@ -185,6 +198,5 @@ collectCarrots (player,carrot) {
 
   //increase and update the score
   this.score += 10;
-  //this.scoreText.setText(`Carrots found: ${this.score}`);
 }
 }

@@ -20,25 +20,19 @@ var config = {
   height: 600,
   // The physics options
   physics: {
-    // The physics engine to use (Phaser has multiple)
+    // The physics engine to use
     default: 'arcade',
     // Configuration properties for the arcade physics
     arcade: {
       // Set up a constant force of gravity
       gravity: { y: 300 },
-      // No debug information (set it to true and check it out!)
+      // No debug
       debug: false
     }
   },
-  // Scene refers to the functions that will be used to run  the game
-  // (More complex versions with multiple scenes are possible!)
+  //the scenes in the game
   scene: [Preloader,Menu,Game]
-  // {
-  //   preload: preload,
-  //   create: create,
-  //   update: update
-  // }
 };
 
-// With the configuration set up we can create the game itself!
+// creating the game itself
 let game = new Phaser.Game(config);
