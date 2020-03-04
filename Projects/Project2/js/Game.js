@@ -119,8 +119,9 @@ class Game extends Phaser.Scene {
     //creating the cursors
     this.cursors = this.input.keyboard.createCursorKeys();
     //the camera
-    // set bounds so the camera won't go outside the game world
-    this.cameras.main.setBounds(0, 0, 10000, 600);
+    // set bounds so the camera won't go outside the game world and sets the
+    //limit of the world to scroll to
+    this.cameras.main.setBounds(0, 0, 8000, 600);
 
     // make the camera follow the player
     this.cameras.main.startFollow(this.player);
@@ -174,18 +175,27 @@ class Game extends Phaser.Scene {
     }
     //changing the background to be darker as the player advances in the game
     else if (this.player.x > 800 && this.player.x < 1386) {
-      this.say("I must be careful ... not to fall on the spikes",this.voice,this.voiceParameters);
+      this.say("I must be careful ... not to fall on the spikes", this.voice, this.voiceParameters);
+      this.background.setTint(0xe2e2e2);
+    } else if (this.player.x > 1386 && this.player.x < 3000) {
       this.background.setTint(0xc4c4c4);
-    }
-    else if (this.player.x > 1386 && this.player.x < 2000) {
-      this.background.setTint(0x8e8e8e);
-    }
-    else if(this.isDead === true){
+    } else if (this.player.x > 3000 && this.player.x < 4000) {
+      this.background.setTint(0x7a7a7a);
+    } else if (this.player.x > 4000 && this.player.x < 5000) {
+      this.background.setTint(0x595959);
+    } else if (this.player.x > 5000) {
+      this.background.setTint(0x444444);
+      //checking if the player is dead, put the background red
+    } else if (this.isDead === true) {
       //setting the sky red
       this.background.setTint(0xff0000);
     }
-    if(this.player.x = 3714){
-      this.say("ooh... that was close",this.voice,this.voiceParameters);
+    //saying messages along the way
+    if (this.player.x = 3714) {
+      this.say("ooh... that was close", this.voice, this.voiceParameters);
+    }
+    if (this.player.x = 5500) {
+      this.say("Now... I need to get the last ...succulent... carrot", this.voice, this.voiceParameters);
     }
     console.log(this.player.x);
     console.log(this.player.y);

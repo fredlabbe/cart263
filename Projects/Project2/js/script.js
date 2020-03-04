@@ -25,13 +25,15 @@ var config = {
     // Configuration properties for the arcade physics
     arcade: {
       // Set up a constant force of gravity
-      gravity: { y: 300 },
+      gravity: {
+        y: 300
+      },
       // No debug
       debug: false
     }
   },
   //the scenes in the game
-  scene: [Preloader,Menu,Game]
+  scene: [Preloader, Menu, Game]
 };
 
 // creating the game itself
