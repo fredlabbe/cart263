@@ -184,11 +184,11 @@ class Game extends Phaser.Scene {
     } else if (this.player.x > 3000 && this.player.x < 4000) {
       this.say("ooh... that was close", this.voice, this.voiceParameters);
       this.background.setTint(0x7a7a7a);
-    } else if (this.player.x > 4000 && this.player.x < 5000) {
+    } else if (this.player.x > 4000 && this.player.x < 4800) {
       this.background.setTint(0x595959);
-    } else if (this.player.x > 5000) {
+    } else if (this.player.x > 4800 && this.player.x < 5000) {
       this.background.setTint(0x444444);
-      his.say("Now... I need to get the last ...succulent... carrot", this.voice, this.voiceParameters);
+      this.say("Now... I need to get the last ...succulent... carrot", this.voice, this.voiceParameters);
     }
     //checking if the player is dead, put the background red
     if (this.isDying === true) {
