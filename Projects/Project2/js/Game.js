@@ -125,7 +125,7 @@ class Game extends Phaser.Scene {
 
     // make the camera follow the player
     this.cameras.main.startFollow(this.player);
-
+    //Setting up he collision between the game objects
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.carrots, this.platforms);
     this.physics.add.collider(this.player, this.spikes, this.hitSpikes, null, this);
@@ -144,22 +144,19 @@ class Game extends Phaser.Scene {
   //
 
   update() {
-    // Now we can check the cursors keys to see if they're down one by one
-    // In each case we set the appropriate velocity and play the appropriate animation
+    //checking the user input and make the bunny move accordingly
     if (this.cursors.left.isDown) {
-      // setVelocityX will start the player moving at that number of pixels per second
-      // We don't need to do anything more than this
+      //left cursor down, so negative velocity
       this.player.setVelocityX(-160);
-      // We play an animation using the sprite's anims property and giving it the appropriate animation key
+      // playing the corresponding animation
       this.player.anims.play('left', true);
     } else if (this.cursors.right.isDown) {
-      // Similarly for right
+      // going right means positive velocity and the corresponding animation again
       this.player.setVelocityX(160);
       this.player.anims.play('right', true);
 
     } else {
-      // If neither left nor right is pressed the player should stop
-      // so we set its velocity to 0 and turn it to face the front
+      //if not pressing any arrow key, bunny faces forward
       this.player.setVelocityX(0);
       this.player.anims.play('turn');
     }
@@ -197,9 +194,6 @@ class Game extends Phaser.Scene {
     if (this.player.x = 5500) {
       this.say("Now... I need to get the last ...succulent... carrot", this.voice, this.voiceParameters);
     }
-    console.log(this.player.x);
-    console.log(this.player.y);
-
   }
   // hitSpikes(player,spikes)
   //
@@ -234,7 +228,7 @@ class Game extends Phaser.Scene {
     }
   }
 
-  // say(text)
+  // say(text,voice,params)
   //
   // Speaks the text given with the parameters determined at the top of the script.
   say(text, voice, params) {
@@ -242,8 +236,8 @@ class Game extends Phaser.Scene {
   }
   // collectCarrots
   //
-  // This function is called when the player and a star overlap. It will automatically
-  // receive arguments containing the player and the specific carrot they touched.
+  // This function is called when the player and a carrot overlap. If yes, the
+  //carrot disappears from the game
   collectCarrots(player, carrot) {
     //pausing previous eaten carrot just in case
     this.chewSFX.pause();
