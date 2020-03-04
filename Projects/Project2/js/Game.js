@@ -70,19 +70,28 @@ class Game extends Phaser.Scene {
     //the platforms
     this.platforms = this.physics.add.staticGroup();
     this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-    this.platforms.create(450, 400, 'ground').refreshBody();
+    this.platforms.create(550, 400, 'ground').refreshBody();
     this.platforms.create(1100, 450, 'ground').refreshBody();
     this.platforms.create(1600, 270, 'ground').refreshBody();
     this.platforms.create(2300, 568, 'ground').setScale(2).refreshBody();
+    this.platforms.create(2500, 200, 'ground').setScale(1.2).refreshBody();
+    this.platforms.create(3000, 300, 'ground').setScale(0.8).refreshBody();
+    this.platforms.create(2600, 400, 'ground').setScale(0.8).refreshBody();
+    this.platforms.create(3150, 90, 'ground').setScale(0.8).refreshBody();
+    this.platforms.create(3800, 400, 'ground').setScale(1.4).refreshBody();
+    this.platforms.create(4500, 568, 'ground').setScale(2).refreshBody();
+    this.platforms.create(5000, 380, 'ground').setScale(1.5).refreshBody();
+    this.platforms.create(5500, 200, 'ground').setScale(0.8).refreshBody();
+    this.platforms.create(6400, 500, 'ground').setScale(0.8).refreshBody();
 
     //the carrots
     this.carrots = this.physics.add.group({
       key: 'carrot',
-      repeat: 14,
+      repeat: 20,
       setXY: {
         x: 12,
         y: 0,
-        stepX: 300
+        stepX: 750
       }
     });
 
@@ -90,8 +99,20 @@ class Game extends Phaser.Scene {
     this.spikes = this.physics.add.staticGroup();
     this.spikes.create(1400, 580, 'spikes').setScale(0.4).refreshBody();
     this.spikes.create(1957, 510, 'spikes').setScale(0.4).refreshBody();
+    this.spikes.create(2061, 510, 'spikes').setScale(0.4).refreshBody();
+    this.spikes.create(3800, 354, 'spikes').setScale(0.4).refreshBody();
+    this.spikes.create(3600, 354, 'spikes').setScale(0.4).refreshBody();
+    this.spikes.create(4150, 510, 'spikes').setScale(0.4).refreshBody();
+    this.spikes.create(4000, 354, 'spikes').setScale(0.4).refreshBody();
+    this.spikes.create(4350, 510, 'spikes').setScale(0.4).refreshBody();
+    this.spikes.create(4900, 330, 'spikes').setScale(0.4).refreshBody();
+    this.spikes.create(5000, 330, 'spikes').setScale(0.4).refreshBody();
+    this.spikes.create(5900, 580, 'spikes').setScale(0.4).refreshBody();
+    this.spikes.create(6000, 580, 'spikes').setScale(0.4).refreshBody();
+    this.spikes.create(6100, 580, 'spikes').setScale(0.4).refreshBody();
+    this.spikes.create(6200, 580, 'spikes').setScale(0.4).refreshBody();
     //the player
-    this.player = this.physics.add.sprite(1500, 150, 'character');
+    this.player = this.physics.add.sprite(100, 500, 'character');
     this.player.setScale(1.5);
     this.player.setBounce(0.2);
 
@@ -153,6 +174,7 @@ class Game extends Phaser.Scene {
     }
     //changing the background to be darker as the player advances in the game
     else if (this.player.x > 800 && this.player.x < 1386) {
+      this.say("I must be careful ... not to fall on the spikes",this.voice,this.voiceParameters);
       this.background.setTint(0xc4c4c4);
     }
     else if (this.player.x > 1386 && this.player.x < 2000) {
@@ -161,6 +183,9 @@ class Game extends Phaser.Scene {
     else if(this.isDead === true){
       //setting the sky red
       this.background.setTint(0xff0000);
+    }
+    if(this.player.x = 3714){
+      this.say("ooh... that was close",this.voice,this.voiceParameters);
     }
     console.log(this.player.x);
     console.log(this.player.y);
@@ -174,7 +199,7 @@ class Game extends Phaser.Scene {
   hitSpikes() {
     //disabling the player's movement because dead
     this.input.enabled = false;
-    this.player.body.velocity.x = 0;
+    //pausing the physics so the player cannot move anymore
     this.physics.pause();
     //only starting the process if the player is dying
     if (this.isDying === false) {
