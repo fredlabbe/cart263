@@ -113,7 +113,9 @@ class Game extends Phaser.Scene {
     this.spikes.create(6200, 580, 'spikes').setScale(0.4).refreshBody();
     //the player
     this.player = this.physics.add.sprite(100, 500, 'character');
+    //increasing the size of the sprite a bit
     this.player.setScale(1.5);
+    //bounces a bit like a bunny
     this.player.setBounce(0.2);
 
     //creating the cursors
@@ -168,31 +170,30 @@ class Game extends Phaser.Scene {
     }
     //restarting the game if the player falls off.. not gore yet!
     if (this.player.x < 0 || this.player.y > 600) {
+      //start by pausing the game so it does not become chaotic
+      this.musicSFX.pause();
       this.scene.restart();
     }
-    //changing the background to be darker as the player advances in the game
-    else if (this.player.x > 800 && this.player.x < 1386) {
+    //changing the background to be darker as the player advances in the game and
+    //saying messages along the way
+    if (this.player.x > 800 && this.player.x < 1386) {
       this.say("I must be careful ... not to fall on the spikes", this.voice, this.voiceParameters);
       this.background.setTint(0xe2e2e2);
     } else if (this.player.x > 1386 && this.player.x < 3000) {
       this.background.setTint(0xc4c4c4);
     } else if (this.player.x > 3000 && this.player.x < 4000) {
+      this.say("ooh... that was close", this.voice, this.voiceParameters);
       this.background.setTint(0x7a7a7a);
     } else if (this.player.x > 4000 && this.player.x < 5000) {
       this.background.setTint(0x595959);
     } else if (this.player.x > 5000) {
       this.background.setTint(0x444444);
-      //checking if the player is dead, put the background red
-    } else if (this.isDead === true) {
+      his.say("Now... I need to get the last ...succulent... carrot", this.voice, this.voiceParameters);
+    }
+    //checking if the player is dead, put the background red
+    if (this.isDying === true) {
       //setting the sky red
       this.background.setTint(0xff0000);
-    }
-    //saying messages along the way
-    if (this.player.x = 3714) {
-      this.say("ooh... that was close", this.voice, this.voiceParameters);
-    }
-    if (this.player.x = 5500) {
-      this.say("Now... I need to get the last ...succulent... carrot", this.voice, this.voiceParameters);
     }
   }
   // hitSpikes(player,spikes)
