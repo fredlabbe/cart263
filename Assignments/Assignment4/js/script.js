@@ -13,6 +13,8 @@ https://github.com/dariusk/corpora
 
 */
 let dataJSON;
+let vowels = ["a","e","i","o","u","y"];
+let article;
 $(document).ready(function() {
 
   // The first thing we need to do is load the data we're going
@@ -73,6 +75,13 @@ function setup(){
 
   // Now the cat
   let cat = getRandomElement(dataJSON.cats);
+  //if the first letter of the cat breed is a vowel, puts an instead of a
+  if(vowels.includes(cat.charAt(0).toLowerCase())){
+    article = "an";
+  }
+  else{
+    article = "a";
+  }
 
   // Same again for room
   let room = getRandomElement(dataJSON.rooms);
@@ -86,7 +95,7 @@ function setup(){
   // Now we can construct our description with a template string
   // We have the basic structure of a sentence and we substitute in the
   // values we've just calculated
-  let description = `${condiment} ${verb} like a ${cat} called ${name} who plays ${game} in a ${room}.`;
+  let description = `${condiment} ${verb} like ${article} ${cat} called ${name} who plays ${game} in some ${room}.`;
 
   // Finally, we add it to the page and hey presto!
   $('div').append(description)
