@@ -12,7 +12,7 @@ Corpora
 https://github.com/dariusk/corpora
 
 */
-
+let dataJSON;
 $(document).ready(function() {
 
   // The first thing we need to do is load the data we're going
@@ -31,8 +31,9 @@ $(document).ready(function() {
 // This function gets called by getJSON when the data has been loaded.
 // The data itself will be in the 'data' argument as a JavaScript object.
 function gotData(data) {
+  dataJSON = data;
   setup();
-  //$(document).on('click',setup);
+  $(document).on('click',setup);
 }
 
 // dataError()
@@ -53,13 +54,15 @@ function getRandomElement(array) {
 //
 //
 function setup(){
+  //emptying the div even if it is already empty
+  $('div').empty();
   // Now we select random elements from the three arrays inside
   // our JSON to get a random condiment, cat, and room. Then we add those
   // words onto our page by setting the text of the appropriate span.
 
   // First the condiment
   // Get a random condiment from the condiments array in the JSON
-  let condiment = getRandomElement(data.condiments);
+  let condiment = getRandomElement(dataJSON.condiments);
   // Assume it's singular
   let verb = 'is';
   // Check if the last latter of the condiment is an 's'
@@ -69,16 +72,16 @@ function setup(){
   }
 
   // Now the cat
-  let cat = getRandomElement(data.cats);
+  let cat = getRandomElement(dataJSON.cats);
 
   // Same again for room
-  let room = getRandomElement(data.rooms);
+  let room = getRandomElement(dataJSON.rooms);
 
   //the name of the cat as a greek god name
-  let name = getRandomElement(data.greek_gods);
+  let name = getRandomElement(dataJSON.greek_gods);
 
   //the game the cat plays
-  let game = getRandomElement(data.rpgs);
+  let game = getRandomElement(dataJSON.rpgs);
 
   // Now we can construct our description with a template string
   // We have the basic structure of a sentence and we substitute in the
@@ -86,5 +89,5 @@ function setup(){
   let description = `${condiment} ${verb} like a ${cat} called ${name} who plays ${game} in a ${room}.`;
 
   // Finally, we add it to the page and hey presto!
-  $('body').append(description)
+  $('div').append(description)
 }
