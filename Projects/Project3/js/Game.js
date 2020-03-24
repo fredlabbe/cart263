@@ -37,6 +37,7 @@ class Game extends Phaser.Scene {
 
         this.setTint(0xff0000);
         //let unit = new Unit(this.scene,250,250,'carrot');
+        //this.add.existing(unit);
         let unit = this.scene.add.sprite(400, 400, 'carrot').setInteractive();
         this.unitArray.push(unit);
 
