@@ -39,7 +39,7 @@ class Game extends Phaser.Scene {
         //let unit = new Unit(this.scene,250,250,'carrot');
         //this.add.existing(unit);
         let unit = this.scene.add.sprite(400, 400, 'carrot').setInteractive();
-        this.unitArray.push(unit);
+        this.scene.unitArray.push(unit); //GROUP OR ARRAY?
 
     });
     this.player = this.physics.add.sprite(300, 300, 'carrot').setInteractive();
@@ -55,40 +55,41 @@ class Game extends Phaser.Scene {
     }
     this.player.on('pointerdown', function (pointer) {
 
-        this.setTint(0xff0000);
+        this.setTint(0xc1c1c1);
         this.scene.playerClicked = true;
 
 
     });
 
     //NEED TO MOVE ALL OF THAT IN A FOR LOOP AND CHECK ALL OF THE UNITS
+    //When the player clicked on a unit and then somewhere else, genereate an
+    //invisible object at the point where the user clicks where the unit will
+    //move to
     this.input.on('pointerdown', function(pointer){
       console.log("works before if");
-      if(this.scene.playerClicked === true){
+      if(this.scene.playerClicked === true && this.scene.player.body.velocity.x === 0 && this.scene.player.body.velocity.y === 0){
         console.log("works");
         let destination = this.scene.physics.add.sprite(pointer.x, pointer.y, '');
-        this.scene.physics.moveToObject(this.scene.player, pointer, 240);
-        this.scene.physics.add.overlap(this.scene.player, destination, function (player, destination){
-          player.setVelocity(0,0);
-          //this.scene.playerClicked = false;
+        //v = d/t => t = d/v NOT WORKING YET
+        let distance = Phaser.Math.Distance.Between(this.scene.player.x, this.scene.player.y, pointer.x, pointer.y);
+        let velocity = Math.sqrt(Math.pow(this.scene.player.body.velocity.x, 2) + Math.pow(this.scene.player.body.velocity.y, 2));
+        let time = distance/velocity; //(this.scene.player.body.velocity);
+        this.scene.physics.moveToObject(this.scene.player, pointer, 240, 1000);
+        setTimeout(() => {
+          this.scene.player.setVelocity(0,0);
+          this.scene.player.clearTint();
+          this.scene.playerClicked = false;
 
-        }, null, this)
+        }, 1000)
+        // this.scene.physics.add.overlap(this.scene.player, destination, function (player, destination){
+        //   //player.setVelocity(0,0);
+        //   player.stop();
+        //   //this.scene.playerClicked = false;
+        //
+        // }, null, this)
     }
 
     });
-
-    //this.base.inputEnabled = true;
-    //this.base.events.onInputDown.add(buildingClicked, this);
-    //setting up the cursors
-    //this.cursors = this.input.keyboard.createCursorKeys();
-    // Marker that will follow the mouse
-    //this.marker = this.add.graphics();
-    //this.marker.lineStyle(3, 0xffffff, 1);
-    //this.marker.strokeRect(0, 0, this.map.tileWidth, this.map.tileHeight);
-
-
-
-    //this.input.on('pointerup', this.handleClick.bind(this));
 
     //setting up a background that follows the player
     //this.background = this.add.sprite(400, 300, 'sky');
