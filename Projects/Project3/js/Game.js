@@ -14,6 +14,7 @@ class Game extends Phaser.Scene {
 
   constructor() {
     super('Game');
+    this.currentUnit = null;
   }
   //init(data)
   //initializing all the data of this scene
@@ -53,16 +54,45 @@ class Game extends Phaser.Scene {
 
     });
     //this.player = this.physics.add.sprite(300, 300, 'carrot').setInteractive();
-    for(let i = 0; i < this.unitArray.length; i++){
-      let element = this.unitArray[i];
-      element.on('pointerdown', function (pointer) {
 
-          this.setTint(0xc1c1c1);
-          this.scene.playerClicked = true;
+    //When the player clicked on a unit and then somewhere else, genereate an
+    //invisible object at the point where the user clicks where the unit will
+    //move to
 
+    this.input.on('pointerdown', (pointer) =>{
+      console.log(this.currentUnit);
+      if(this.currentUnit === null){
+        return;
+      }
+      if(this.currentUnit.body.velocity.x === 0 && this.currentUnit.body.velocity.y === 0){
+        console.log("works");
+        //let destination = this.physics.add.sprite(pointer.x, pointer.y, '');
+        //v = d/t => t = d/v
+        //calculating the distance between the current unit selected and the pointer
+        let distance = Phaser.Math.Distance.Between(this.currentUnit.body.x, this.currentUnit.body.y, pointer.x, pointer.y);
+        let velocity = 0.3;
+        let time = distance/velocity; //(this.scene.player.body.velocity);
+        this.physics.moveToObject(this.currentUnit, pointer, 1000, time);//is it moving to destination or to the pointer?????????????????????????????
+        console.log(time);
+        setTimeout(() => {
+          this.currentUnit.body.setVelocity(0,0);
+          this.currentUnit.clearTint();
+          //this.isClicked = false;
+          this.currentUnit = null;
+          //THERE WAS SOMETHING TO SOLVE HERE with the overlap or SOMETHING^^^^^^^^^^^^^????????????????????????????????????????????????????????????????????????????????????????????????
 
-      });
+        }, time)
+        // this.scene.physics.add.overlap(this.scene.player, destination, function (player, destination){
+        //   //player.setVelocity(0,0);
+        //   player.stop();
+        //   //this.scene.playerClicked = false;
+        //
+        // }, null, this)
     }
+
+    });
+
+
     // this.player.on('pointerdown', function (pointer) {
     //
     //     this.setTint(0xc1c1c1);
@@ -81,10 +111,12 @@ class Game extends Phaser.Scene {
     //the camera
     // set bounds so the camera won't go outside the game world and sets the
     //limit of the world to scroll to
-    //this.cameras.main.setBounds(0, 0, 8000, 600);
 
-    // make the camera follow the player
-    //this.cameras.main.startFollow(this.player);
+    this.cameras.main.setBounds(0, 0, 2000, 2000);
+
+    // make the camera follow the pointer
+    //this.cameras.main.startFollow(pointer);
+    //this.cameras.main.scrollX = pointer.x;
     //Setting up he collision between the game objects
     // this.physics.add.collider(this.player, this.platforms);
     // this.physics.add.collider(this.carrots, this.platforms);
@@ -102,11 +134,11 @@ class Game extends Phaser.Scene {
   //
 
   update() {
-    // if(this.playerClicked === true){
-    //   console.log("works");
-    //   this.physics.moveToObject(this.player, pointer, 240);
-    //
-    // }
+    for(let i = 0; i < this.unitArray.length; i++){
+      let element = this.unitArray[i];
+      //console.log("array works");
+
+    }
 
   }
   //

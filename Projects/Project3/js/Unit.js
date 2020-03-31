@@ -1,7 +1,7 @@
 // Class Unit
 //
 //The parent class for units in the RTS game
-class Worker extends Phaser.GameObjects.Sprite{
+class Worker extends Phaser.Physics.Arcade.Sprite{
 
   // scene = null;
   //  hp = 100;
@@ -9,36 +9,22 @@ class Worker extends Phaser.GameObjects.Sprite{
    constructor(scene,x,y,texture) {
      super(scene,x,y,texture);
      scene.add.existing(this);
+     scene.physics.world.enableBody(this);
      console.log("constructor works");
      this.isClicked = false;
      this.health = 100;
+     this.scene = scene;
      this.setInteractive();
 
-     this.scene.input.on('pointerdown', function(pointer){
-       console.log("works before if");
-       if(this.isClicked === true && this.body.velocity.x === 0 && this.body.velocity.y === 0){
-         console.log("works");
-         let destination = this.scene.physics.add.sprite(pointer.x, pointer.y, '');
-         //v = d/t => t = d/v
-         let distance = Phaser.Math.Distance.Between(this.body.x, this.body.y, pointer.x, pointer.y);
-         let velocity = 0.3;
-         let time = distance/velocity; //(this.scene.player.body.velocity);
-         this.scene.physics.moveToObject(this, pointer, 1000, time);
-         console.log(time);
-         setTimeout(() => {
-           this.body.setVelocity(0,0);
-           this.body.clearTint();
-           this.isClicked = false;
-           //THERE WAS SOMETHING TO SOLVE HERE with the overlap or SOMETHING^^^^^^^^^^^^^????????????????????????????????????????????????????????????????????????????????????????????????
 
-         }, time)
-         // this.scene.physics.add.overlap(this.scene.player, destination, function (player, destination){
-         //   //player.setVelocity(0,0);
-         //   player.stop();
-         //   //this.scene.playerClicked = false;
-         //
-         // }, null, this)
-     }
+
+     this.on('pointerdown', (pointer) =>  {
+       console.log("clicking on the unit works");
+
+         this.setTint(0xc1c1c1);
+         this.isClicked = true;
+         this.scene.currentUnit = this;
+
 
      });
      // this.x = x;
