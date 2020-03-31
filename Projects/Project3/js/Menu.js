@@ -13,7 +13,7 @@ class Menu extends Phaser.Scene {
   }
   //creating the menu with an image and when the user clicks, switches scenes
   create() {
-    this.add.sprite(400, 300, 'menu');
+    this.add.sprite(400, 300, '');
     //when the mouse is clicked, the game starts
     this.input.on('pointerdown', () => this.scene.start('Game'));
   }
