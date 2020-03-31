@@ -6,7 +6,15 @@
 //Questions for pippin:
 //1.
 //2.
-//3. 
+//3.
+
+// function(n, start1, stop1, start2, stop2) {
+//  return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
+///}
+
+//
+//
+//
 
 
 
@@ -20,6 +28,7 @@ class Game extends Phaser.Scene {
   //init(data)
   //initializing all the data of this scene
   init(data) {
+    this.background;
     this.base;
     this.unitArray = [];
     //the wood the player has. It is acquired by making a worker cut trees
@@ -44,27 +53,28 @@ class Game extends Phaser.Scene {
   // Sets up the game
 
   create() {
+    //setting up a background
+    this.background = this.add.sprite(0, 0, 'map');
+    this.background.setScale(2);
+    //this.background.setScrollFactor(0);
 
     //game.input.mouse.capture = true;
     this.base = this.add.sprite(200, 200, 'castle').setInteractive().setScale(0.2);
     this.base.on('pointerdown', function(pointer) {
 
       this.setTint(0xc1c1c1);
-      let unit = new Worker(this.scene, 250, 250, 'carrot');
+      let unit = new Worker(this.scene, 250, 250, 'knight');
       //unit.create();//NOT A FUNCTION???????????????????????????????????????????????????????
-      //this.add.existing(unit);
-      //let unit = this.scene.add.sprite(400, 400, 'carrot').setInteractive();
       this.scene.unitArray.push(unit);
 
     });
-    //this.player = this.physics.add.sprite(300, 300, 'carrot').setInteractive();
 
+    let tree = new Tree(this, 300, 100, 'tree');
     //When the player clicked on a unit and then somewhere else, genereate an
     //invisible object at the point where the user clicks where the unit will
     //move to
-
     this.input.on('pointerdown', (pointer) => {
-      console.log(this.currentUnit);
+      console.log(pointer);
       if (this.currentUnit === null) {
         return;
       }
@@ -73,10 +83,10 @@ class Game extends Phaser.Scene {
         //let destination = this.physics.add.sprite(pointer.x, pointer.y, '');
         //v = d/t => t = d/v
         //calculating the distance between the current unit selected and the pointer
-        let distance = Phaser.Math.Distance.Between(this.currentUnit.body.x, this.currentUnit.body.y, pointer.x, pointer.y);
+        let distance = Phaser.Math.Distance.Between(this.currentUnit.body.x, this.currentUnit.body.y, pointer.worldX, pointer.worldY);
         let velocity = 0.3;
         let time = distance / velocity; //(this.scene.player.body.velocity);
-        this.physics.moveToObject(this.currentUnit, pointer, 1000, time); //is it moving to destination or to the pointer?????????????????????????????
+        this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, 1000, time); //is it moving to destination or to the pointer?????????????????????????????
         console.log(time);
         setTimeout(() => {
           this.currentUnit.body.setVelocity(0, 0);
@@ -105,10 +115,6 @@ class Game extends Phaser.Scene {
     //
     // });
 
-    //setting up a background that follows the player
-    //this.background = this.add.sprite(400, 300, 'sky');
-    //this.background.setScrollFactor(0);
-
 
 
 
@@ -116,11 +122,13 @@ class Game extends Phaser.Scene {
     //limit of the world to scroll to
     this.cameras.main.setBounds(0, 0, 2000, 2000);
 
+    this.cameras.main.startFollow(this.input.activePointer);
+
     // make the camera follow the pointer when it is moving
-    this.input.on('pointermove', function(pointer) {
-      this.cameras.main.startFollow(pointer);
-      //this.physics.moveToObject(this.player, pointer, 240);
-    }, this);
+    // this.input.on('pointermove', function(pointer) {
+    //
+    //   //this.physics.moveToObject(this.player, pointer, 240);
+    // }, this);
     //this.cameras.main.startFollow(pointer);
     //this.cameras.main.scrollX = pointer.x;
     //Setting up he collision between the game objects
