@@ -86,6 +86,8 @@ class Game extends Phaser.Scene {
 
     });
 
+    let elf = new Elf(this.scene, 400, 400, 'elf');
+
     this.trees = this.physics.add.group({});
 
     for(let i = 0; i < this.numberOfTrees; i++){
