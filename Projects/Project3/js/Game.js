@@ -32,9 +32,13 @@ class Game extends Phaser.Scene {
     this.mapLimit = 2000;
     this.base;
     this.units;
+    this.elves;
+    this.numberOfElves = 1;
+    this.elvesCluster = 600;
+    this.elfDetections;
     this.UNIT_TIME = 2000;
     this.trees;
-    this.numberOfTrees = 100;
+    this.numberOfTrees = 125;
     this.unitArray = [];
     //the wood the player has. It is acquired by making a worker cut trees
     this.wood = 0;
@@ -86,10 +90,12 @@ class Game extends Phaser.Scene {
 
     });
 
-    let elf = new Elf(this.scene, 400, 400, 'elf');
+    this.units = this.physics.add.group({});
 
+    //grouping the trees together
     this.trees = this.physics.add.group({});
-
+    //creating and distributing randomly a bunch of trees on the map and adding
+    //them to the group
     for(let i = 0; i < this.numberOfTrees; i++){
       let randX = this.mapLimit*Math.random();
       let randY = this.mapLimit*Math.random();
@@ -97,6 +103,21 @@ class Game extends Phaser.Scene {
       let tree = new Tree(this, randX, randY, 'tree');
       this.trees.add(tree);
     }
+
+    this.elfDetections = this.physics.add.group({});
+    //grouping the elves together
+    this.elves = this.physics.add.group({});
+    //displaying the elves randomly but together in a definite area
+    for(let i = 0; i < this.numberOfElves; i++){
+      let randX = 200*Math.random() + this.elvesCluster + 200;
+      let randY = 200*Math.random() + this.elvesCluster;
+      let elf = new Elf(this, randX, randY, 'elf');
+      this.elves.add(elf);
+      this.elfDetections.add(elf.detectionBox);
+  }
+    this.physics.add.overlap(this.units, this.elfDetections, this.chaseUnits, null, this);
+
+
     //When the player clicked on a unit and then somewhere else, genereate an
     //invisible object at the point where the user clicks where the unit will
     //move to
@@ -142,8 +163,6 @@ class Game extends Phaser.Scene {
     this.woodText = this.add.text(20, 20, `Wood: ${this.wood}`,{fontSize: '20px', fill: '#000'});
     this.woodText.setScrollFactor(0);
 
-    this.units = this.physics.add.group({});
-
     //managing the overlap between the units and the trees so the player collects wood
     this.physics.add.overlap(this.units, this.trees, this.collectWood, null, this);
 
@@ -175,6 +194,7 @@ class Game extends Phaser.Scene {
       let element = this.unitArray[i];
 
     }
+    //https://www.html5gamedevs.com/topic/36580-best-way-to-apply-a-method-to-all-elements-in-a-group/ 
   }
 
   // collectWood()
@@ -197,6 +217,11 @@ class Game extends Phaser.Scene {
 
     }
 
+  }
+
+  chaseUnits(unit,box){
+    console.log("unit detected");
+    unit.scene.physics.moveToObject(box.elf, unit, 240,1000);
   }
 
 }
