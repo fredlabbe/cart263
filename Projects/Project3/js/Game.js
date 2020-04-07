@@ -42,6 +42,7 @@ class Game extends Phaser.Scene {
     this.WOOD_TIME = 2000;
     //the amount of wood collected after the set collecting time
     this.WOOD_COLLECT = 10;
+    this.CHOP_AMT = 0.5;
     //the text displaying the wood
     this.woodText;
 
@@ -56,6 +57,7 @@ class Game extends Phaser.Scene {
   // Description of preload
 
   preload() {
+  //see the preload class
 
   }
 
@@ -83,11 +85,15 @@ class Game extends Phaser.Scene {
 
 
     });
+
+    this.trees = this.physics.add.group({});
+
     for(let i = 0; i < this.numberOfTrees; i++){
       let randX = this.mapLimit*Math.random();
       let randY = this.mapLimit*Math.random();
+      // put if statement saying if it falls on the base, put elsewhere!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       let tree = new Tree(this, randX, randY, 'tree');
-      this.scene.trees.add(tree);
+      this.trees.add(tree);
     }
     //When the player clicked on a unit and then somewhere else, genereate an
     //invisible object at the point where the user clicks where the unit will
@@ -135,7 +141,6 @@ class Game extends Phaser.Scene {
     this.woodText.setScrollFactor(0);
 
     this.units = this.physics.add.group({});
-    this.trees = this.physics.add.group({});
 
     //managing the overlap between the units and the trees so the player collects wood
     this.physics.add.overlap(this.units, this.trees, this.collectWood, null, this);
@@ -160,7 +165,7 @@ class Game extends Phaser.Scene {
 
   // update()
   //
-  //keeping track of the user input and if the player falls off the game space (restarts).
+  //
   //
 
   update() {
@@ -170,17 +175,25 @@ class Game extends Phaser.Scene {
     }
   }
 
-  collectWood(tree,unit){
-    console.log("collecting wood before timeout");
-    tree.disableBody(false, false);
-    setTimeout(() => {
+  // collectWood()
+  //
+  //Called when a unit overlaps a tree. When it does,  it takes a certain amount
+  //of time before the wood is collected and the tree disappears.
+
+  collectWood(unit,tree){
+    //tree.disableBody(false, false);
+
+    if(unit.body.velocity.x === 0 && unit.body.velocity.x === 0){
+    tree.resourceAmt -= unit.scene.CHOP_AMT;
+    console.log("chop chop");
+  }
+    if(tree.resourceAmt <= 0) {
       console.log("collecting wood");
       unit.scene.wood += unit.scene.WOOD_COLLECT;
       unit.scene.woodText.setText(`Wood: ${unit.scene.wood}`);
-      //tree.ressourceAmt -= unit.scene.WOOD_COLLECT;
       tree.destroy();
 
-    }, this.WOOD_TIME);
+    }
 
   }
 

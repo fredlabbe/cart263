@@ -11,7 +11,7 @@ class Tree extends Phaser.Physics.Arcade.Sprite {
     scene.physics.world.enableBody(this);
     console.log("tree constructor works");
     //this unit's health
-    this.ressourceAmt = 200;
+    this.resourceAmt = 200;
     //setting the scene
     this.scene = scene;
     //setting the unit interactive so it can be clicked
