@@ -29,10 +29,22 @@ class Game extends Phaser.Scene {
   //initializing all the data of this scene
   init(data) {
     this.background;
+    this.mapLimit = 2000;
     this.base;
+    this.units;
+    this.UNIT_TIME = 2000;
+    this.trees;
+    this.numberOfTrees = 100;
     this.unitArray = [];
     //the wood the player has. It is acquired by making a worker cut trees
     this.wood = 0;
+    //the amount of time it take before collecting wood
+    this.WOOD_TIME = 2000;
+    //the amount of wood collected after the set collecting time
+    this.WOOD_COLLECT = 10;
+    //the text displaying the wood
+    this.woodText;
+
     //the total amount of coin the player has
     this.coin = 0;
 
@@ -56,20 +68,27 @@ class Game extends Phaser.Scene {
     //setting up a background
     this.background = this.add.sprite(0, 0, 'map');
     this.background.setScale(2);
-    //this.background.setScrollFactor(0);
 
-    //game.input.mouse.capture = true;
+    //creating the base
     this.base = this.add.sprite(200, 200, 'castle').setInteractive().setScale(0.2);
     this.base.on('pointerdown', function(pointer) {
-
       this.setTint(0xc1c1c1);
-      let unit = new Worker(this.scene, 250, 250, 'knight');
-      //unit.create();//NOT A FUNCTION???????????????????????????????????????????????????????
-      this.scene.unitArray.push(unit);
+      setTimeout(() => {
+        this.scene.base.setTint(0xffffff);
+        let unit = new Worker(this.scene, 250, 250, 'knight');
+        this.scene.unitArray.push(unit);
+        this.scene.units.add(unit);
+
+      }, this.UNIT_TIME);
+
 
     });
-
-    let tree = new Tree(this, 300, 100, 'tree');
+    for(let i = 0; i < this.numberOfTrees; i++){
+      let randX = this.mapLimit*Math.random();
+      let randY = this.mapLimit*Math.random();
+      let tree = new Tree(this, randX, randY, 'tree');
+      this.scene.trees.add(tree);
+    }
     //When the player clicked on a unit and then somewhere else, genereate an
     //invisible object at the point where the user clicks where the unit will
     //move to
@@ -85,13 +104,12 @@ class Game extends Phaser.Scene {
         //calculating the distance between the current unit selected and the pointer
         let distance = Phaser.Math.Distance.Between(this.currentUnit.body.x, this.currentUnit.body.y, pointer.worldX, pointer.worldY);
         let velocity = 0.3;
-        let time = distance / velocity; //(this.scene.player.body.velocity);
-        this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, 1000, time); //is it moving to destination or to the pointer?????????????????????????????
+        let time = distance / velocity;
+        this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, 1000, time);
         console.log(time);
         setTimeout(() => {
           this.currentUnit.body.setVelocity(0, 0);
           this.currentUnit.clearTint();
-          //this.isClicked = false;
           this.currentUnit = null;
           //THERE WAS SOMETHING TO SOLVE HERE with the overlap or SOMETHING^^^^^^^^^^^^^????????????????????????????????????????????????????????????????????????????????????????????????
 
@@ -106,23 +124,21 @@ class Game extends Phaser.Scene {
 
     });
 
-
-    // this.player.on('pointerdown', function (pointer) {
-    //
-    //     this.setTint(0xc1c1c1);
-    //     this.scene.playerClicked = true;
-    //
-    //
-    // });
-
-
-
-
     // set bounds so the camera won't go outside the game world and sets the
     //limit of the world to scroll to
-    this.cameras.main.setBounds(0, 0, 2000, 2000);
+    this.cameras.main.setBounds(0, 0, this.mapLimit, this.mapLimit);
 
     this.cameras.main.startFollow(this.input.activePointer);
+
+    //the text displaying the wood
+    this.woodText = this.add.text(20, 20, `Wood: ${this.wood}`,{fontSize: '20px', fill: '#000'});
+    this.woodText.setScrollFactor(0);
+
+    this.units = this.physics.add.group({});
+    this.trees = this.physics.add.group({});
+
+    //managing the overlap between the units and the trees so the player collects wood
+    this.physics.add.overlap(this.units, this.trees, this.collectWood, null, this);
 
     // make the camera follow the pointer when it is moving
     // this.input.on('pointermove', function(pointer) {
@@ -150,7 +166,22 @@ class Game extends Phaser.Scene {
   update() {
     for (let i = 0; i < this.unitArray.length; i++) {
       let element = this.unitArray[i];
+
     }
+  }
+
+  collectWood(tree,unit){
+    console.log("collecting wood before timeout");
+    tree.disableBody(false, false);
+    setTimeout(() => {
+      console.log("collecting wood");
+      unit.scene.wood += unit.scene.WOOD_COLLECT;
+      unit.scene.woodText.setText(`Wood: ${unit.scene.wood}`);
+      //tree.ressourceAmt -= unit.scene.WOOD_COLLECT;
+      tree.destroy();
+
+    }, this.WOOD_TIME);
+
   }
 
 }

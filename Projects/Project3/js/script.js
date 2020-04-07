@@ -2,13 +2,10 @@
 
 /*****************
 
-A Children Game?
+Name of game
 Frederick Labbe
 
-This is a platformer that looks all cute and nice at the beginning. The player
-is immersed in a pink and cute world where the player is a rabbit that must
-collect carrots. However, when the player falls on spikes, blood spits
-everywhere and everything turns gore...
+Description of game
 
 ******************/
 //setting up the configuration of the game
