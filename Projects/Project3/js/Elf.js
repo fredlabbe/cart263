@@ -1,6 +1,7 @@
 // Class Elf
 //
 //The class for the enemies in the rts game
+
 class Elf extends Phaser.Physics.Arcade.Sprite {
 
   constructor(scene, x, y, texture) {
@@ -26,8 +27,11 @@ class Elf extends Phaser.Physics.Arcade.Sprite {
 
   }
 
+  // update()
+  //
+  // pinning constantly the detection box of each elf to this elf 
+
   update(){
-    console.log("detection");
     this.detectionBox.x = this.x;
     this.detectionBox.y = this.y;
 
