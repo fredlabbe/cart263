@@ -10,8 +10,10 @@ class Elf extends Phaser.Physics.Arcade.Sprite {
     //enabling the physics
     scene.physics.world.enableBody(this);
     console.log("constructor works");
-    //this unit's health
+    //this elf's health
     this.health = 100;
+    //this elf's amount of damage
+    this.damage = 0.5;
     //setting the scene
     this.scene = scene;
     //setting the scale of the unit down because if not it will be way too big
@@ -25,7 +27,6 @@ class Elf extends Phaser.Physics.Arcade.Sprite {
   }
 
   update(){
-    // never gets called -> should automatically get called - see with pippin tomorrowwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
     console.log("detection");
     this.detectionBox.x = this.x;
     this.detectionBox.y = this.y;

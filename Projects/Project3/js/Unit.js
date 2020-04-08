@@ -13,6 +13,8 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     this.isClicked = false;
     //this unit's health
     this.health = 100;
+    //this unit's damage
+    this.damage = 0.25;
     //setting the scene
     this.scene = scene;
     //setting the unit interactive so it can be clicked

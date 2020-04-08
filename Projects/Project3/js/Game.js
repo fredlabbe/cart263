@@ -33,7 +33,7 @@ class Game extends Phaser.Scene {
     this.base;
     this.units;
     this.elves;
-    this.numberOfElves = 1;
+    this.numberOfElves = 5;
     this.elvesCluster = 600;
     this.elfDetections;
     this.UNIT_TIME = 2000;
@@ -116,6 +116,7 @@ class Game extends Phaser.Scene {
       this.elfDetections.add(elf.detectionBox);
   }
     this.physics.add.overlap(this.units, this.elfDetections, this.chaseUnits, null, this);
+    this.physics.add.overlap(this.units, this.elves, this.fight, null, this);
 
 
     //When the player clicked on a unit and then somewhere else, genereate an
@@ -134,7 +135,7 @@ class Game extends Phaser.Scene {
         let distance = Phaser.Math.Distance.Between(this.currentUnit.body.x, this.currentUnit.body.y, pointer.worldX, pointer.worldY);
         let velocity = 0.3;
         let time = distance / velocity;
-        //let t = getTime(this.currentUnit, pointer);
+        //let t = getTime(this.currentUnit, pointer, 0.3);
         this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, 1000, time);
         console.log(time);
         setTimeout(() => {
@@ -205,9 +206,9 @@ class Game extends Phaser.Scene {
   // getTime(object, destination)
   //
 
-  getTime(object, destination){
+  getTime(object, destination, velocity){
     let distance = Phaser.Math.Distance.Between(object.body.x, object.body.y, destination.worldX, destination.worldY);
-    let velocity = 0.3;
+    //let velocity = 0.3;
     let time = distance / velocity;
 
     return time;
@@ -235,9 +236,31 @@ class Game extends Phaser.Scene {
 
   }
 
+  // chaseUnits(unit,box)
+  //
+  // moves the elf according to the unit when it has been in the detection box
+
   chaseUnits(unit,box){
     console.log("unit detected");
     unit.scene.physics.moveToObject(box.elf, unit, 240,1000);
+  }
+
+  //fight(unit,elf)
+  //
+  //
+
+  fight(unit, elf){
+    //substracting the health of the unit or the elf depending on the amount of
+    //damage they each do
+    unit.health -= elf.damage;
+    elf.health -= unit.damage;
+    //managing the elf or the unit when it is dying
+    if(unit.health <= 0){
+      unit.destroy();
+    }
+    if(elf.health <= 0){
+      elf.destroy();
+    }
   }
 
 }
