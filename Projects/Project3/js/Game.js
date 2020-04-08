@@ -134,6 +134,7 @@ class Game extends Phaser.Scene {
         let distance = Phaser.Math.Distance.Between(this.currentUnit.body.x, this.currentUnit.body.y, pointer.worldX, pointer.worldY);
         let velocity = 0.3;
         let time = distance / velocity;
+        //let t = getTime(this.currentUnit, pointer);
         this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, 1000, time);
         console.log(time);
         setTimeout(() => {
@@ -173,6 +174,7 @@ class Game extends Phaser.Scene {
     // }, this);
     //this.cameras.main.startFollow(pointer);
     //this.cameras.main.scrollX = pointer.x;
+
     //Setting up he collision between the game objects
     // this.physics.add.collider(this.player, this.platforms);
     // this.physics.add.collider(this.carrots, this.platforms);
@@ -194,7 +196,21 @@ class Game extends Phaser.Scene {
       let element = this.unitArray[i];
 
     }
-    //https://www.html5gamedevs.com/topic/36580-best-way-to-apply-a-method-to-all-elements-in-a-group/ 
+    //https://www.html5gamedevs.com/topic/36580-best-way-to-apply-a-method-to-all-elements-in-a-group/
+    this.elves.children.each(function(enemy) {
+    enemy.update();
+  }, this);
+  }
+
+  // getTime(object, destination)
+  //
+
+  getTime(object, destination){
+    let distance = Phaser.Math.Distance.Between(object.body.x, object.body.y, destination.worldX, destination.worldY);
+    let velocity = 0.3;
+    let time = distance / velocity;
+
+    return time;
   }
 
   // collectWood()
