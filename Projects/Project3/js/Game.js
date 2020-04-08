@@ -135,8 +135,8 @@ class Game extends Phaser.Scene {
         let distance = Phaser.Math.Distance.Between(this.currentUnit.body.x, this.currentUnit.body.y, pointer.worldX, pointer.worldY);
         let velocity = 0.3;
         let time = distance / velocity;
-        //let t = getTime(this.currentUnit, pointer, 0.3);
-        this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, 1000, time);
+        let t = this.getTime(this.currentUnit, pointer, 0.3);
+        this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, 1000, t);
         console.log(time);
         setTimeout(() => {
           this.currentUnit.body.setVelocity(0, 0);
@@ -241,13 +241,15 @@ class Game extends Phaser.Scene {
   // moves the elf according to the unit when it has been in the detection box
 
   chaseUnits(unit,box){
-    console.log("unit detected");
+    console.log(unit, box);
+    if(box.elf.health > 0){
     unit.scene.physics.moveToObject(box.elf, unit, 240,1000);
+  }
   }
 
   //fight(unit,elf)
   //
-  //
+  //Gets called when a unit and elf overlap. Substracts
 
   fight(unit, elf){
     //substracting the health of the unit or the elf depending on the amount of
@@ -256,9 +258,12 @@ class Game extends Phaser.Scene {
     elf.health -= unit.damage;
     //managing the elf or the unit when it is dying
     if(unit.health <= 0){
+      this.units.remove(unit);
       unit.destroy();
     }
     if(elf.health <= 0){
+      elf.body.reset();
+      elf.detectionBox.destroy();
       elf.destroy();
     }
   }
