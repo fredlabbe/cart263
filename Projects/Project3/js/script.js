@@ -26,7 +26,7 @@ var config = {
     }
   },
   //the scenes in the game
-  scene: [Preloader, Menu, Game]
+  scene: [Preloader, Menu, Narrative, Game]
 };
 
 // creating the game itself

@@ -4,9 +4,11 @@
 
 
 //Questions for pippin:
-//1.
-//2.
-//3.
+//1. getTime no work for elf probably because of worldX worldY
+//2. Speed not okay for elf, something is wrong with the calculation of time speed and moveToObject
+//3. How to limit characters to edge of map
+//4. problem when a unit is clicked and try to click another one, the previous one starts to go away
+//5. can't stop the elf when it has killed
 
 // function(n, start1, stop1, start2, stop2) {
 //  return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
@@ -33,10 +35,11 @@ class Game extends Phaser.Scene {
     this.base;
     this.units;
     this.elves;
-    this.ELF_SPEED = 0.25;
-    this.UNIT_SPEED = 0.2;
+    this.ELF_SPEED = 0.075;
+    this.UNIT_SPEED = 0.1;
     this.numberOfElves = 5;
-    this.elvesCluster = 600;
+    this.elvesClusterY = 600;
+    this.elvesClusterX = this.elvesClusterY +200;
     this.elfDetections;
     this.UNIT_TIME = 2000;
     this.trees;
@@ -56,6 +59,17 @@ class Game extends Phaser.Scene {
     //the total amount of coin the player has
     this.coin = 0;
 
+    // The screaming in pain sound for when friendly unit dies
+    this.friendlyScreamSFX = new Audio("assets/sounds/scream.mp3");
+    //the sound of an elf dying
+    this.elfScreamSFX = new Audio("assets/sounds/die.wav");
+    //the wood chopping sound
+    this.chopSFX = new Audio("assets/sounds/chop.wav");
+    //sound of swords clashing when units fight
+    this.fightSFX = new Audio("assets/sounds/fight.mp3");
+    //the music
+    this.musicSFX = new Audio("assets/sounds/celticMusic.mp3");
+
 
   }
 
@@ -74,6 +88,13 @@ class Game extends Phaser.Scene {
   // Sets up the game
 
   create() {
+    //playing the music not too loud
+    this.musicSFX.play();
+    this.musicSFX.volume = 0.1;
+    this.musicSFX.loop = true;
+    //lowering the volumes of certain sounds
+    this.chopSFX.volume = 0.3;
+    this.fightSFX.volume = 0.3;
     //setting up a background
     this.background = this.add.sprite(0, 0, 'map');
     this.background.setScale(2);
@@ -82,12 +103,14 @@ class Game extends Phaser.Scene {
     //limit of the world to scroll to
     this.cameras.main.setBounds(0, 0, this.mapLimit, this.mapLimit);
 
+    // make the camera follow the pointer when it is moving
     this.cameras.main.startFollow(this.input.activePointer);
 
     //the text displaying the wood
     this.woodText = this.add.text(20, 20, `Wood: ${this.wood}`, {
-      fontSize: '20px',
-      fill: '#000'
+      fontFamily: 'Garamont',
+      fontSize: '30px',
+      fill: '#d4af37'
     });
     this.woodText.setScrollFactor(0);
 
@@ -105,12 +128,14 @@ class Game extends Phaser.Scene {
           let unit = new Worker(this.scene, 250, 250, 'knight');
           this.scene.unitArray.push(unit);
           this.scene.units.add(unit);
+          //constraining the elf to the limits of the map
+          //unit.setCollideWorldBounds(true);
 
         }, this.UNIT_TIME);
       }
 
     });
-
+    //grouping the units together
     this.units = this.physics.add.group({});
 
     //grouping the trees together
@@ -124,18 +149,22 @@ class Game extends Phaser.Scene {
       let tree = new Tree(this, randX, randY, 'tree');
       this.trees.add(tree);
     }
-
+    //grouping the detection boxes of the elves together
     this.elfDetections = this.physics.add.group({});
     //grouping the elves together
     this.elves = this.physics.add.group({});
-    //displaying the elves randomly but together in a definite area
+    //displaying the elves randomly but together in a definite area and adding
+    //them to the elves group along with the detection boxes
     for (let i = 0; i < this.numberOfElves; i++) {
-      let randX = 200 * Math.random() + this.elvesCluster + 200;
-      let randY = 200 * Math.random() + this.elvesCluster;
+      let randX = 200 * Math.random() + this.elvesClusterX;
+      let randY = 200 * Math.random() + this.elvesClusterY;
       let elf = new Elf(this, randX, randY, 'elf');
       this.elves.add(elf);
       this.elfDetections.add(elf.detectionBox);
+      //constraining the elf to the limits of the map
+      //elf.setCollideWorldBounds(true);
     }
+    //the overlaps of detection boxes and units and the one of elves and units
     this.physics.add.overlap(this.units, this.elfDetections, this.chaseUnits, null, this);
     this.physics.add.overlap(this.units, this.elves, this.fight, null, this);
 
@@ -144,13 +173,14 @@ class Game extends Phaser.Scene {
     //invisible object at the point where the user clicks where the unit will
     //move to
     this.input.on('pointerdown', (pointer) => {
-      console.log(pointer);
-      if (this.currentUnit === null) {
+      //console.log(pointer);
+      if (this.currentUnit === null) { //supposed to solve the error saying that cannot read property velocity of undefined of 3 lines below
         return;
       }
       if (this.currentUnit.body.velocity.x === 0 && this.currentUnit.body.velocity.y === 0) {
-        let t = this.getTime(this.currentUnit, pointer, this.scene.UNIT_SPEED);
-        this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, 1000, t); //need to solve the speed here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        let t = this.getTime(this.currentUnit, pointer, this.UNIT_SPEED);
+        this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, this.scene.UNIT_SPEED, t); //need to solve the speed here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        console.log(this.UNIT_SPEED,t)
         setTimeout(() => {
           this.currentUnit.body.setVelocity(0, 0);
           this.currentUnit.clearTint();
@@ -171,21 +201,12 @@ class Game extends Phaser.Scene {
     //managing the overlap between the units and the trees so the player collects wood
     this.physics.add.overlap(this.units, this.trees, this.collectWood, null, this);
 
-    // make the camera follow the pointer when it is moving
-    // this.input.on('pointermove', function(pointer) {
-    //
-    //   //this.physics.moveToObject(this.player, pointer, 240);
-    // }, this);
-    //this.cameras.main.startFollow(pointer);
-    //this.cameras.main.scrollX = pointer.x;
+
 
     //Setting up he collision between the game objects
     // this.physics.add.collider(this.player, this.platforms);
     // this.physics.add.collider(this.carrots, this.platforms);
     // this.physics.add.collider(this.player, this.spikes, this.hitSpikes, null, this);
-
-    //collecting the carrots
-    //this.physics.add.overlap(this.player, this.carrots, this.collectCarrots, null, this)
 
   }
 
@@ -210,12 +231,12 @@ class Game extends Phaser.Scene {
   //
   //v = d/t => t = d/v
   //calculating the distance between the current object selected and the destination
-  //according to a given speed
+  //according to a given velocity
 
   getTime(object, destination, velocity) {
     let distance = Phaser.Math.Distance.Between(object.body.x, object.body.y, destination.worldX, destination.worldY);
     let time = distance / velocity;
-
+    console.log("getTime: " + time, distance, velocity);
     return time;
   }
 
@@ -230,13 +251,20 @@ class Game extends Phaser.Scene {
     if (unit.body.velocity.x === 0 && unit.body.velocity.x === 0) {
       tree.resourceAmt -= unit.scene.CHOP_AMT;
       console.log("chop chop");
+      this.chopSFX.play();
     }
     if (tree.resourceAmt <= 0) {
       console.log("collecting wood");
       unit.scene.wood += unit.scene.WOOD_COLLECT;
       unit.scene.woodText.setText(`Wood: ${unit.scene.wood}`);
       tree.destroy();
-
+      this.chopSFX.pause();
+    }
+    //checking if the unit is killed while chopping wood
+    if(unit.health <= 0){
+      console.log("dead");
+      //pausing the chopping sound
+      this.chopSFX.pause();
     }
 
   }
@@ -246,11 +274,18 @@ class Game extends Phaser.Scene {
   // moves the elf according to the unit when it has been in the detection box
 
   chaseUnits(unit, box) {
-    console.log(unit, box);
-    if (box.elf.health > 0) {
-      let time = this.getTime(box.elf, unit, this.scene.ELF_SPEED);
-      unit.scene.physics.moveToObject(box.elf, unit, this.scene.ELF_SPEED, time);
+    //console.log(unit, box);
+    if (box.elf.health > 0 && unit.health > 0) {
+      let distance = Phaser.Math.Distance.Between(box.elf.body.x, box.elf.body.y, unit.x, unit.y);
+      let time = distance / unit.scene.ELF_SPEED;
+      console.log("time inside chaseUnits: " + time);
+
+      let t = this.getTime(box.elf, unit, unit.scene.ELF_SPEED);
+      unit.scene.physics.moveToObject(box.elf, unit, unit.scene.ELF_SPEED, time);
+      console.log(unit.scene.ELF_SPEED, t);
+      console.log("time inside getTime: " + t);
     }
+    //if(unit.health)
   }
 
   //fight(unit,elf)
@@ -258,19 +293,27 @@ class Game extends Phaser.Scene {
   //Gets called when a unit and elf overlap. Substracts
 
   fight(unit, elf) {
+    //playing the fighting sound
+    this.fightSFX.play();
     //substracting the health of the unit or the elf depending on the amount of
     //damage they each do
     unit.health -= elf.damage;
     elf.health -= unit.damage;
     //managing the elf or the unit when it is dying
     if (unit.health <= 0) {
+      elf.body.setVelocity(0,0);
       this.units.remove(unit);
       unit.destroy();
+      this.friendlyScreamSFX.pause();
+      this.friendlyScreamSFX.play();
+      this.fightSFX.pause();
     }
     if (elf.health <= 0) {
       elf.body.reset();
       elf.detectionBox.destroy();
       elf.destroy();
+      this.elfScreamSFX.pause();
+      this.elfScreamSFX.play();
     }
   }
 

@@ -9,7 +9,8 @@ class Preloader extends Phaser.Scene {
     this.load.image('tree', 'assets/images/tree.png');
     this.load.image('knight', 'assets/images/knight.png');
     this.load.image('elf', 'assets/images/elf.png');
-    this.load.image('menu', 'assets/images/MenuImage.jpg');
+    this.load.image('menu', 'assets/images/menu.jpg');
+    this.load.image('narrative', 'assets/images/narrative.jpg');
     this.load.image('castle', 'assets/images/castle.png');
     this.load.image('blood', 'assets/images/blood.png');
     this.load.spritesheet('character', 'assets/images/bunny.png', {

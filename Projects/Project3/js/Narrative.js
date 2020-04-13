@@ -2,10 +2,10 @@
 //
 //The game menu
 
-class Menu extends Phaser.Scene {
+class Narrative extends Phaser.Scene {
 
   constructor() {
-    super('Menu');
+    super('Narrative');
   }
 //nothing there
   preload() {
@@ -13,8 +13,8 @@ class Menu extends Phaser.Scene {
   }
   //creating the menu with an image and when the user clicks, switches scenes
   create() {
-    this.add.sprite(478, 300, 'menu');
+    this.add.sprite(420, 300, 'narrative');
     //when the mouse is clicked, the game starts
-    this.input.on('pointerdown', () => this.scene.start('Narrative'));
+    this.input.on('pointerdown', () => this.scene.start('Game'));
   }
 }
