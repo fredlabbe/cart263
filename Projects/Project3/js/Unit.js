@@ -1,6 +1,6 @@
 // Class Worker
 //
-//The parent class for units in the RTS game
+//The class for workers in the game
 class Worker extends Phaser.Physics.Arcade.Sprite {
 
   constructor(scene, x, y, texture) {
@@ -9,7 +9,7 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     //enabling the physics
     scene.physics.world.enableBody(this);
-    console.log("constructor works");
+    //knowing when this unit is clicked
     this.isClicked = false;
     //this unit's health
     this.health = 100;
@@ -27,14 +27,11 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     //so we know it's selected and sets the current unit selected to this one
     this.on('pointerdown', (pointer) => {
       console.log("clicking on the unit works");
-      //setting the tint ro be a little darker
+      //setting the tint to be a little darker
       this.setTint(0xc1c1c1);
       this.isClicked = true;
+      //setting the current unit selected to this one
       this.scene.currentUnit = this;
     });
   }
-
-
-
-
 }

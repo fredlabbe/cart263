@@ -10,7 +10,6 @@ class Elf extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     //enabling the physics
     scene.physics.world.enableBody(this);
-    console.log("constructor works");
     //this elf's health
     this.health = 100;
     //this elf's amount of damage
@@ -21,17 +20,18 @@ class Elf extends Phaser.Physics.Arcade.Sprite {
     this.setScale(0.25);
 
     //creating an area of detection centered around the elf to detect its own enemies
-    this.detectionBox = this.scene.physics.add.sprite(this.body.x, this.body.y, '').setScale(8);
-    this.detectionBox.alpha = 0.2;
+    this.detectionBox = this.scene.physics.add.sprite(this.body.x, this.body.y, '').setScale(8).setVisible(false);
+    //this.detectionBox.alpha = 0.2;
+    //saying that the detection box's elf is this one
     this.detectionBox.elf = this;
 
   }
 
   // update()
   //
-  // pinning constantly the detection box of each elf to this elf 
+  // pinning constantly the detection box of each elf to themsElves (got it? :'D)
 
-  update(){
+  update() {
     this.detectionBox.x = this.x;
     this.detectionBox.y = this.y;
 

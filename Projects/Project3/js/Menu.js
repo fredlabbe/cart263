@@ -1,13 +1,13 @@
 //Class Menu
 //
-//The game menu
+//The game menu, when clicked, switches to narrative screen
 
 class Menu extends Phaser.Scene {
 
   constructor() {
     super('Menu');
   }
-//nothing there
+  //nothing there
   preload() {
 
   }

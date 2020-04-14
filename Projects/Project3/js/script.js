@@ -2,10 +2,15 @@
 
 /*****************
 
-Name of game
+The Dusk of Conquests
 Frederick Labbe
 
-Description of game
+Revolt! Humans shall now rebell against the oppressing Elves occupying the realm
+and enslaving humans.
+
+A basic draft of an RTS game where the player has to gather resources to build
+an army and kill the opponents. The game is won when all Elves have been
+eradicated.  
 
 ******************/
 //setting up the configuration of the game

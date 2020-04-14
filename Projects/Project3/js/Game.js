@@ -31,22 +31,32 @@ class Game extends Phaser.Scene {
   //initializing all the data of this scene
   init(data) {
     this.background;
+    //the bounds
     this.mapLimit = 2000;
     this.boundX = 1200;
     this.boundY = 900;
+    //the base
     this.base;
+    //the groups
     this.units;
     this.elves;
+    this.elfDetections;
+    this.trees;
+    //the speeds of the characters
     this.ELF_SPEED = 0.05;
     this.UNIT_SPEED = 0.1;
-    this.numberOfElves = 5;
+    //the total number of elves in the game
+    this.numberOfElves = 15;
+    //the x and y values for the area in which the elves will be clustered
     this.elvesClusterY = 600;
     this.elvesClusterX = this.elvesClusterY +200;
-    this.elfDetections;
+    //the time it takes for a unit to appear in ms
     this.UNIT_TIME = 2000;
-    this.trees;
+    //the total number of trees in the map
     this.numberOfTrees = 125;
+    //the array of units
     this.unitArray = [];
+    //the cost for creating a unit
     this.UNIT_COST = 10;
     //the wood the player has. It is acquired by making a worker cut trees
     this.wood = 30;
@@ -54,6 +64,7 @@ class Game extends Phaser.Scene {
     this.WOOD_TIME = 2000;
     //the amount of wood collected after the set collecting time
     this.WOOD_COLLECT = 10;
+    //how many woods are chopping for every frame from the total ressourceAmt of the tree
     this.CHOP_AMT = 0.5;
     //the text displaying the wood
     this.woodText;
@@ -74,29 +85,29 @@ class Game extends Phaser.Scene {
 
   // preload()
   //
-  // Description of preload
+  // An empty genereic preload function
 
   preload() {
     //see the preload class
 
   }
 
-
   // create()
   //
-    // Sets up the game
+  // Sets up the game
 
   create() {
+    //setting the bounds of the world for the characters
     this.physics.world.setBounds(0, 0, this.boundX, this.boundY);
 
-    //playing the music not too loud
+    //playing the music not too loud and looping it
     //this.musicSFX.play();
     this.musicSFX.volume = 0.1;
     this.musicSFX.loop = true;
     //lowering the volumes of certain sounds
     this.chopSFX.volume = 0.3;
     this.fightSFX.volume = 0.3;
-    //setting up a background
+    //setting up a background large enough
     this.background = this.add.sprite(0, 0, 'map');
     this.background.setScale(2);
 
@@ -106,14 +117,6 @@ class Game extends Phaser.Scene {
 
     // make the camera follow the pointer when it is moving
     this.cameras.main.startFollow(this.input.activePointer);
-
-    //the text displaying the wood
-    this.woodText = this.add.text(20, 20, `Wood: ${this.wood}`, {
-      fontFamily: 'Garamont',
-      fontSize: '30px',
-      fill: '#d4af37'
-    });
-    this.woodText.setScrollFactor(0);
 
     //creating the base
     this.base = this.add.sprite(200, 200, 'castle').setInteractive().setScale(0.2);
@@ -175,7 +178,7 @@ class Game extends Phaser.Scene {
     //move to
     this.input.on('pointerdown', (pointer) => {
       //console.log(pointer);
-      if (this.currentUnit === null) { //supposed to solve the error saying that cannot read property velocity of undefined of 3 lines below
+      if (this.currentUnit === null) { //supposed to solve the error saying that cannot read property velocity of undefined of 3 lines below!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         return;
       }
       else if (this.currentUnit.body.velocity.x === 0 && this.currentUnit.body.velocity.y === 0) {
@@ -187,14 +190,21 @@ class Game extends Phaser.Scene {
           this.currentUnit.clearTint();
           this.currentUnit = null;
           //THERE WAS SOMETHING TO SOLVE HERE with the overlap or SOMETHING^^^^^^^^^^^^^????????????????????????????????????????????????????????????????????????????????????????????????
-
         }, t)
       }
-
     });
 
     //managing the overlap between the units and the trees so the player collects wood
     this.physics.add.overlap(this.units, this.trees, this.collectWood, null, this);
+
+    //the text displaying the wood
+    this.woodText = this.add.text(20, 20, `Wood: ${this.wood}`, {
+      fontFamily: 'Garamond Bold',
+      fontSize: '30px',
+      fill: '#d4af37'
+    });
+    //make the text follow the camera
+    this.woodText.setScrollFactor(0);
 
 
 

@@ -1,6 +1,6 @@
 // Class Tree
 //
-//The parent class for units in the RTS game
+//The class for the trees in the RTS game
 class Tree extends Phaser.Physics.Arcade.Sprite {
 
   constructor(scene, x, y, texture) {
@@ -19,7 +19,4 @@ class Tree extends Phaser.Physics.Arcade.Sprite {
     this.setScale(0.1);
 
   }
-
-
-
 }
