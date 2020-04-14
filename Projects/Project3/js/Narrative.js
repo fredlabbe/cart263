@@ -1,6 +1,6 @@
 //Class Menu
 //
-//The game menu
+//The narration screen
 
 class Narrative extends Phaser.Scene {
 
@@ -11,7 +11,7 @@ class Narrative extends Phaser.Scene {
   preload() {
 
   }
-  //creating the menu with an image and when the user clicks, switches scenes
+  //creating the screen with an image and when the user clicks, switches scenes
   create() {
     this.add.sprite(420, 300, 'narrative');
     //when the mouse is clicked, the game starts

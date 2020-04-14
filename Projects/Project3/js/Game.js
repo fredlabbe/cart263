@@ -32,10 +32,12 @@ class Game extends Phaser.Scene {
   init(data) {
     this.background;
     this.mapLimit = 2000;
+    this.boundX = 1200;
+    this.boundY = 900;
     this.base;
     this.units;
     this.elves;
-    this.ELF_SPEED = 0.075;
+    this.ELF_SPEED = 0.05;
     this.UNIT_SPEED = 0.1;
     this.numberOfElves = 5;
     this.elvesClusterY = 600;
@@ -55,9 +57,6 @@ class Game extends Phaser.Scene {
     this.CHOP_AMT = 0.5;
     //the text displaying the wood
     this.woodText;
-
-    //the total amount of coin the player has
-    this.coin = 0;
 
     // The screaming in pain sound for when friendly unit dies
     this.friendlyScreamSFX = new Audio("assets/sounds/scream.mp3");
@@ -85,11 +84,13 @@ class Game extends Phaser.Scene {
 
   // create()
   //
-  // Sets up the game
+    // Sets up the game
 
   create() {
+    this.physics.world.setBounds(0, 0, this.boundX, this.boundY);
+
     //playing the music not too loud
-    this.musicSFX.play();
+    //this.musicSFX.play();
     this.musicSFX.volume = 0.1;
     this.musicSFX.loop = true;
     //lowering the volumes of certain sounds
@@ -129,7 +130,7 @@ class Game extends Phaser.Scene {
           this.scene.unitArray.push(unit);
           this.scene.units.add(unit);
           //constraining the elf to the limits of the map
-          //unit.setCollideWorldBounds(true);
+          unit.setCollideWorldBounds(true);
 
         }, this.UNIT_TIME);
       }
@@ -162,7 +163,7 @@ class Game extends Phaser.Scene {
       this.elves.add(elf);
       this.elfDetections.add(elf.detectionBox);
       //constraining the elf to the limits of the map
-      //elf.setCollideWorldBounds(true);
+      elf.setCollideWorldBounds(true);
     }
     //the overlaps of detection boxes and units and the one of elves and units
     this.physics.add.overlap(this.units, this.elfDetections, this.chaseUnits, null, this);
@@ -177,7 +178,7 @@ class Game extends Phaser.Scene {
       if (this.currentUnit === null) { //supposed to solve the error saying that cannot read property velocity of undefined of 3 lines below
         return;
       }
-      if (this.currentUnit.body.velocity.x === 0 && this.currentUnit.body.velocity.y === 0) {
+      else if (this.currentUnit.body.velocity.x === 0 && this.currentUnit.body.velocity.y === 0) {
         let t = this.getTime(this.currentUnit, pointer, this.UNIT_SPEED);
         this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, this.scene.UNIT_SPEED, t); //need to solve the speed here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         console.log(this.UNIT_SPEED,t)
@@ -188,12 +189,6 @@ class Game extends Phaser.Scene {
           //THERE WAS SOMETHING TO SOLVE HERE with the overlap or SOMETHING^^^^^^^^^^^^^????????????????????????????????????????????????????????????????????????????????????????????????
 
         }, t)
-        // this.scene.physics.add.overlap(this.scene.player, destination, function (player, destination){
-        //   //player.setVelocity(0,0);
-        //   player.stop();
-        //   //this.scene.playerClicked = false;
-        //
-        // }, null, this)
       }
 
     });
@@ -225,6 +220,7 @@ class Game extends Phaser.Scene {
     this.elves.children.each(function(enemy) {
       enemy.update();
     }, this);
+
   }
 
   // getTime(object, destination)
