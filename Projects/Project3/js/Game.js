@@ -53,7 +53,7 @@ class Game extends Phaser.Scene {
     //the time it takes for a unit to appear in ms
     this.UNIT_TIME = 2000;
     //the total number of trees in the map
-    this.numberOfTrees = 125;
+    this.numberOfTrees = 75;
     //the array of units
     this.unitArray = [];
     //the cost for creating a unit
@@ -147,8 +147,8 @@ class Game extends Phaser.Scene {
     //creating and distributing randomly a bunch of trees on the map and adding
     //them to the group
     for (let i = 0; i < this.numberOfTrees; i++) {
-      let randX = this.mapLimit * Math.random();
-      let randY = this.mapLimit * Math.random();
+      let randX = this.boundX * Math.random();
+      let randY = this.boundY * Math.random();
       // put if statement saying if it falls on the base, put elsewhere!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       let tree = new Tree(this, randX, randY, 'tree');
       this.trees.add(tree);
