@@ -12,11 +12,14 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     //knowing when this unit is clicked
     this.isClicked = false;
     //this unit's health
+    this.maxHealth = 100;
     this.health = 100;
     //this unit's damage
     this.damage = 0.25;
     //setting the scene
     this.scene = scene;
+    this.barX = this.x;
+    this.barY = this.y - 20;
     //setting the unit interactive so it can be clicked
     this.setInteractive();
     //setting the scale of the unit down because if not it will be way too big
@@ -33,5 +36,21 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
       //setting the current unit selected to this one
       this.scene.currentUnit = this;
     });
+  }
+  update(){
+    let healthSize;
+    healthSize = map(this.health, 0, this.maxHealth, 0, 50);
+    push();
+    //centering the rectangle
+    rectMode(CENTER);
+    //dark red color
+    fill(125, 37, 32);
+    //creating the red rectangle
+    rect(this.barX, this.barY, 50, 10);
+    //the green color
+    fill(60, 94, 55);
+    //creating the rectangle that is mapped, the green one, the life
+    rect(this.barX, this.barY, healthSize, 10);
+    pop();
   }
 }

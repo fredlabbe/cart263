@@ -6,16 +6,18 @@
 //Questions for pippin:
 //1. getTime no work for elf probably because of worldX worldY
 //2. Speed not okay for elf, something is wrong with the calculation of time speed and moveToObject
-//3. How to limit characters to edge of map
+//3. How to limit characters to edge of map!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //4. problem when a unit is clicked and try to click another one, the previous one starts to go away
 //5. can't stop the elf when it has killed
+//6.problems with stopping the sounds
 
 // function(n, start1, stop1, start2, stop2) {
 //  return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
 ///}
 
-//
-//
+//IDEAS FOR DETECTING OVERLAPPING:
+//https://jsfiddle.net/mhu42s7n/1/
+//https://rexrainbow.github.io/phaser3-rex-notes/docs/site/arcade-world/
 //
 
 
@@ -33,10 +35,14 @@ class Game extends Phaser.Scene {
     this.background;
     //the bounds
     this.mapLimit = 2000;
-    this.boundX = 1200;
+    this.boundX = 1195;
     this.boundY = 900;
     //the base
     this.base;
+    //base's x position
+    this.baseX = 200;
+    //base's y position
+    this.baseY = 200;
     //the groups
     this.units;
     this.elves;
@@ -49,11 +55,11 @@ class Game extends Phaser.Scene {
     this.numberOfElves = 15;
     //the x and y values for the area in which the elves will be clustered
     this.elvesClusterY = 600;
-    this.elvesClusterX = this.elvesClusterY +200;
+    this.elvesClusterX = this.elvesClusterY + 200;
     //the time it takes for a unit to appear in ms
     this.UNIT_TIME = 2000;
     //the total number of trees in the map
-    this.numberOfTrees = 75;
+    this.numberOfTrees = 55;
     //the array of units
     this.unitArray = [];
     //the cost for creating a unit
@@ -119,7 +125,7 @@ class Game extends Phaser.Scene {
     this.cameras.main.startFollow(this.input.activePointer);
 
     //creating the base
-    this.base = this.add.sprite(200, 200, 'castle').setInteractive().setScale(0.2);
+    this.base = this.add.sprite(this.baseX, this.baseY, 'castle').setInteractive().setScale(0.2);
     this.base.on('pointerdown', function(pointer) {
 
       if (this.scene.wood >= 10) {
@@ -160,10 +166,14 @@ class Game extends Phaser.Scene {
     //displaying the elves randomly but together in a definite area and adding
     //them to the elves group along with the detection boxes
     for (let i = 0; i < this.numberOfElves; i++) {
+      //getting random values for x and y
       let randX = 200 * Math.random() + this.elvesClusterX;
       let randY = 200 * Math.random() + this.elvesClusterY;
+      //creating the elf
       let elf = new Elf(this, randX, randY, 'elf');
+      //adding this elf to the group of elves
       this.elves.add(elf);
+      //adding this elf's detection box to the group of boxes
       this.elfDetections.add(elf.detectionBox);
       //constraining the elf to the limits of the map
       elf.setCollideWorldBounds(true);
@@ -179,12 +189,15 @@ class Game extends Phaser.Scene {
     this.input.on('pointerdown', (pointer) => {
       //console.log(pointer);
       if (this.currentUnit === null) { //supposed to solve the error saying that cannot read property velocity of undefined of 3 lines below!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        console.log("in null");
         return;
       }
-      else if (this.currentUnit.body.velocity.x === 0 && this.currentUnit.body.velocity.y === 0) {
+      if (this.currentUnit.body.velocity.x === 0 && this.currentUnit.body.velocity.y === 0) {
+        //getting the time for the displacement of the unit and for the tiemout
         let t = this.getTime(this.currentUnit, pointer, this.UNIT_SPEED);
+        //moving the object at the given time and speed
         this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, this.scene.UNIT_SPEED, t); //need to solve the speed here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        console.log(this.UNIT_SPEED,t)
+        console.log(this.UNIT_SPEED, t)
         setTimeout(() => {
           this.currentUnit.body.setVelocity(0, 0);
           this.currentUnit.clearTint();
@@ -201,12 +214,10 @@ class Game extends Phaser.Scene {
     this.woodText = this.add.text(20, 20, `Wood: ${this.wood}`, {
       fontFamily: 'Garamond Bold',
       fontSize: '30px',
-      fill: '#d4af37'
+      fill: '#d4af37'//goldish color
     });
-    //make the text follow the camera
+    //make the text follow the camera for some minimal UI
     this.woodText.setScrollFactor(0);
-
-
 
     //Setting up he collision between the game objects
     // this.physics.add.collider(this.player, this.platforms);
@@ -230,6 +241,9 @@ class Game extends Phaser.Scene {
     this.elves.children.each(function(enemy) {
       enemy.update();
     }, this);
+    // this.units.children.each(function(ally) {
+    //   ally.update();
+    // }, this);
 
   }
 
@@ -237,10 +251,11 @@ class Game extends Phaser.Scene {
   //
   //v = d/t => t = d/v
   //calculating the distance between the current object selected and the destination
-  //according to a given velocity
+  //according to a given velocity and returns time
 
   getTime(object, destination, velocity) {
-    let distance = Phaser.Math.Distance.Between(object.body.x, object.body.y, destination.worldX, destination.worldY);
+    let distance = Phaser.Math.Distance.Between(object.body.x, object.body.y, this.cameras.main.getWorldPoint(destination.x,destination.y).x, this.cameras.main.getWorldPoint(destination.x,destination.y).y);
+    console.log(object.body.x, object.body.y, destination.worldX, destination.worldY);
     let time = distance / velocity;
     console.log("getTime: " + time, distance, velocity);
     return time;
@@ -256,7 +271,6 @@ class Game extends Phaser.Scene {
 
     if (unit.body.velocity.x === 0 && unit.body.velocity.x === 0) {
       tree.resourceAmt -= unit.scene.CHOP_AMT;
-      console.log("chop chop");
       this.chopSFX.play();
     }
     if (tree.resourceAmt <= 0) {
@@ -267,7 +281,7 @@ class Game extends Phaser.Scene {
       this.chopSFX.pause();
     }
     //checking if the unit is killed while chopping wood
-    if(unit.health <= 0){
+    if (unit.health <= 0) {
       console.log("dead");
       //pausing the chopping sound
       this.chopSFX.pause();
@@ -282,12 +296,13 @@ class Game extends Phaser.Scene {
   chaseUnits(unit, box) {
     //console.log(unit, box);
     if (box.elf.health > 0 && unit.health > 0) {
+      //reusing the code because of worldX and worldY not working for an object instead of a pointer
       let distance = Phaser.Math.Distance.Between(box.elf.body.x, box.elf.body.y, unit.x, unit.y);
       let time = distance / unit.scene.ELF_SPEED;
       console.log("time inside chaseUnits: " + time);
 
       let t = this.getTime(box.elf, unit, unit.scene.ELF_SPEED);
-      unit.scene.physics.moveToObject(box.elf, unit, unit.scene.ELF_SPEED, time);
+      unit.scene.physics.moveToObject(box.elf, unit, unit.scene.ELF_SPEED, t);
       console.log(unit.scene.ELF_SPEED, t);
       console.log("time inside getTime: " + t);
     }
@@ -307,20 +322,31 @@ class Game extends Phaser.Scene {
     elf.health -= unit.damage;
     //managing the elf or the unit when it is dying
     if (unit.health <= 0) {
-      elf.body.setVelocity(0,0);
+      if(this.currentUnit =! null){
+         this.currentUnit = null
+      }
+      elf.body.setVelocity(0, 0);
+      //removing this unit from its group and getting destroying it
       this.units.remove(unit);
       unit.destroy();
+      //pausing the sound in case it was already playing
       this.friendlyScreamSFX.pause();
+      //playing the sound
       this.friendlyScreamSFX.play();
+      //stopping the fight sound because the unit is dead
       this.fightSFX.pause();
     }
     if (elf.health <= 0) {
+      //resetting the elf's body
       elf.body.reset();
+      //destroying the detection box and the elf
       elf.detectionBox.destroy();
       elf.destroy();
+      //pausing in case the sound was already playing and playing the elf's dying sound
       this.elfScreamSFX.pause();
       this.elfScreamSFX.play();
+      //stopping the fight sound because the elf is dead
+      this.fightSFX.pause();
     }
   }
-
 }
