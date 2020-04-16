@@ -29,12 +29,15 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     //when the user clicks on the unit, it sets its tint to be a little darker
     //so we know it's selected and sets the current unit selected to this one
     this.on('pointerdown', (pointer) => {
+      if(this.scene.isCurrentUnit === false){
+        this.scene.isCurrentUnit = true;
       console.log("clicking on the unit works");
       //setting the tint to be a little darker
       this.setTint(0xc1c1c1);
       this.isClicked = true;
       //setting the current unit selected to this one
       this.scene.currentUnit = this;
+    }
     });
   }
   update(){

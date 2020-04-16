@@ -4,10 +4,7 @@
 
 
 //Questions for pippin:
-//1. getTime no work for elf probably because of worldX worldY
 //2. Speed not okay for elf, something is wrong with the calculation of time speed and moveToObject
-//3. How to limit characters to edge of map!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//4. problem when a unit is clicked and try to click another one, the previous one starts to go away
 //5. can't stop the elf when it has killed
 //6.problems with stopping the sounds
 
@@ -74,6 +71,9 @@ class Game extends Phaser.Scene {
     this.CHOP_AMT = 0.5;
     //the text displaying the wood
     this.woodText;
+
+    this.isCurrentUnit = false;
+    this.isOverlappingTree;
 
     // The screaming in pain sound for when friendly unit dies
     this.friendlyScreamSFX = new Audio("assets/sounds/scream.mp3");
@@ -192,6 +192,7 @@ class Game extends Phaser.Scene {
         console.log("in null");
         return;
       }
+      if(this.isCurrentUnit === true){
       if (this.currentUnit.body.velocity.x === 0 && this.currentUnit.body.velocity.y === 0) {
         //getting the time for the displacement of the unit and for the tiemout
         let t = this.getTime(this.currentUnit, pointer, this.UNIT_SPEED);
@@ -199,16 +200,23 @@ class Game extends Phaser.Scene {
         this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, this.scene.UNIT_SPEED, t); //need to solve the speed here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         console.log(this.UNIT_SPEED, t)
         setTimeout(() => {
+          if(this.currentUnit === null){
+            return;
+          }
+          this.isCurrentUnit = false;
           this.currentUnit.body.setVelocity(0, 0);
           this.currentUnit.clearTint();
           this.currentUnit = null;
           //THERE WAS SOMETHING TO SOLVE HERE with the overlap or SOMETHING^^^^^^^^^^^^^????????????????????????????????????????????????????????????????????????????????????????????????
         }, t)
       }
+    }
     });
 
     //managing the overlap between the units and the trees so the player collects wood
     this.physics.add.overlap(this.units, this.trees, this.collectWood, null, this);
+
+    this.isOverlappingTree = this.physics.world.overlap(this.units, this.trees);
 
     //the text displaying the wood
     this.woodText = this.add.text(20, 20, `Wood: ${this.wood}`, {
@@ -218,12 +226,6 @@ class Game extends Phaser.Scene {
     });
     //make the text follow the camera for some minimal UI
     this.woodText.setScrollFactor(0);
-
-    //Setting up he collision between the game objects
-    // this.physics.add.collider(this.player, this.platforms);
-    // this.physics.add.collider(this.carrots, this.platforms);
-    // this.physics.add.collider(this.player, this.spikes, this.hitSpikes, null, this);
-
   }
 
 
@@ -241,6 +243,8 @@ class Game extends Phaser.Scene {
     this.elves.children.each(function(enemy) {
       enemy.update();
     }, this);
+
+    console.log(this.isOverlappingTree);
     // this.units.children.each(function(ally) {
     //   ally.update();
     // }, this);
@@ -255,9 +259,9 @@ class Game extends Phaser.Scene {
 
   getTime(object, destination, velocity) {
     let distance = Phaser.Math.Distance.Between(object.body.x, object.body.y, this.cameras.main.getWorldPoint(destination.x,destination.y).x, this.cameras.main.getWorldPoint(destination.x,destination.y).y);
-    console.log(object.body.x, object.body.y, destination.worldX, destination.worldY);
+    //console.log(object.body.x, object.body.y, destination.worldX, destination.worldY);
     let time = distance / velocity;
-    console.log("getTime: " + time, distance, velocity);
+    //console.log("getTime: " + time, distance, velocity);
     return time;
   }
 
@@ -267,21 +271,19 @@ class Game extends Phaser.Scene {
   //of time before the wood is collected and the tree disappears.
 
   collectWood(unit, tree) {
-    //tree.disableBody(false, false);
 
-    if (unit.body.velocity.x === 0 && unit.body.velocity.x === 0) {
+    if (unit.body.velocity.x === 0 && unit.body.velocity.y === 0) {
       tree.resourceAmt -= unit.scene.CHOP_AMT;
       this.chopSFX.play();
     }
     if (tree.resourceAmt <= 0) {
-      console.log("collecting wood");
       unit.scene.wood += unit.scene.WOOD_COLLECT;
       unit.scene.woodText.setText(`Wood: ${unit.scene.wood}`);
       tree.destroy();
       this.chopSFX.pause();
     }
     //checking if the unit is killed while chopping wood
-    if (unit.health <= 0) {
+    if (unit.health < 1) {
       console.log("dead");
       //pausing the chopping sound
       this.chopSFX.pause();
@@ -299,19 +301,22 @@ class Game extends Phaser.Scene {
       //reusing the code because of worldX and worldY not working for an object instead of a pointer
       let distance = Phaser.Math.Distance.Between(box.elf.body.x, box.elf.body.y, unit.x, unit.y);
       let time = distance / unit.scene.ELF_SPEED;
-      console.log("time inside chaseUnits: " + time);
+      //console.log("time inside chaseUnits: " + time);
 
       let t = this.getTime(box.elf, unit, unit.scene.ELF_SPEED);
       unit.scene.physics.moveToObject(box.elf, unit, unit.scene.ELF_SPEED, t);
-      console.log(unit.scene.ELF_SPEED, t);
-      console.log("time inside getTime: " + t);
+      //console.log(unit.scene.ELF_SPEED, t);
+      //console.log("time inside getTime: " + t);
     }
-    //if(unit.health)
+    if(unit.health < 0){
+      box.elf.setVelocity(0,0);
+    }
   }
 
   //fight(unit,elf)
   //
-  //Gets called when a unit and elf overlap. Substracts
+  //Gets called when a unit and elf overlap. Substracts the damage to the health
+  //of the respecting character.
 
   fight(unit, elf) {
     //playing the fighting sound
@@ -322,10 +327,10 @@ class Game extends Phaser.Scene {
     elf.health -= unit.damage;
     //managing the elf or the unit when it is dying
     if (unit.health <= 0) {
+      elf.body.setVelocity(0, 0);
       if(this.currentUnit =! null){
          this.currentUnit = null
       }
-      elf.body.setVelocity(0, 0);
       //removing this unit from its group and getting destroying it
       this.units.remove(unit);
       unit.destroy();
