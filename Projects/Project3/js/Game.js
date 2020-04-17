@@ -36,6 +36,7 @@ class Game extends Phaser.Scene {
     this.boundY = 900;
     //the base
     this.base;
+    this.baseSize = 90;
     //base's x position
     this.baseX = 200;
     //base's y position
@@ -115,6 +116,7 @@ class Game extends Phaser.Scene {
     this.fightSFX.volume = 0.3;
     //setting up a background large enough
     this.background = this.add.sprite(0, 0, 'map');
+    this.background.setInteractive();
     this.background.setScale(2);
 
     // set bounds so the camera won't go outside the game world and sets the
@@ -155,7 +157,11 @@ class Game extends Phaser.Scene {
     for (let i = 0; i < this.numberOfTrees; i++) {
       let randX = this.boundX * Math.random();
       let randY = this.boundY * Math.random();
-      // put if statement saying if it falls on the base, put elsewhere!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      //if the random coordinates fall on the base, put elsewhere
+      if(randX < this.baseX + this.baseSize && randY < this.baseY + this.baseSize){
+        randX = 800 * Math.random();
+        randY = 100 * Math.random();
+      }
       let tree = new Tree(this, randX, randY, 'tree');
       this.trees.add(tree);
     }
@@ -183,35 +189,26 @@ class Game extends Phaser.Scene {
     this.physics.add.overlap(this.units, this.elves, this.fight, null, this);
 
 
-    //When the player clicked on a unit and then somewhere else, genereate an
-    //invisible object at the point where the user clicks where the unit will
-    //move to
-    this.input.on('pointerdown', (pointer) => {
-      //console.log(pointer);
-      if (this.currentUnit === null) { //supposed to solve the error saying that cannot read property velocity of undefined of 3 lines below!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        console.log("in null");
-        return;
-      }
-      if(this.isCurrentUnit === true){
-      if (this.currentUnit.body.velocity.x === 0 && this.currentUnit.body.velocity.y === 0) {
-        //getting the time for the displacement of the unit and for the tiemout
-        let t = this.getTime(this.currentUnit, pointer, this.UNIT_SPEED);
-        //moving the object at the given time and speed
-        this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, this.scene.UNIT_SPEED, t); //need to solve the speed here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        console.log(this.UNIT_SPEED, t)
-        setTimeout(() => {
-          if(this.currentUnit === null){
-            return;
-          }
-          this.isCurrentUnit = false;
-          this.currentUnit.body.setVelocity(0, 0);
-          this.currentUnit.clearTint();
-          this.currentUnit = null;
-          //THERE WAS SOMETHING TO SOLVE HERE with the overlap or SOMETHING^^^^^^^^^^^^^????????????????????????????????????????????????????????????????????????????????????????????????
-        }, t)
-      }
-    }
+    //When the player clicked on a unit and then somewhere else, the unit moves there
+    this.background.on('pointerdown', (pointer) => {
+      console.log(pointer.x,pointer.y);
+      this.moveUnit(pointer);
     });
+    //as long as a unit is clicked
+    if (this.currentUnit = !null) {
+      //going through each tree and when one is clicked, moves the unit there
+      this.trees.children.each(function(tree) {
+        tree.on('pointerdown', (pointer) => {
+          this.moveUnit(pointer);
+        });
+      }, this);
+      //going through each elf and when one is clicked, moves the unit there
+      this.elves.children.each(function(elf) {
+        elf.on('pointerdown', (pointer) => {
+          this.moveUnit(pointer);
+        });
+      }, this);
+    }
 
     //managing the overlap between the units and the trees so the player collects wood
     this.physics.add.overlap(this.units, this.trees, this.collectWood, null, this);
@@ -222,7 +219,7 @@ class Game extends Phaser.Scene {
     this.woodText = this.add.text(20, 20, `Wood: ${this.wood}`, {
       fontFamily: 'Garamond Bold',
       fontSize: '30px',
-      fill: '#d4af37'//goldish color
+      fill: '#d4af37' //goldish color
     });
     //make the text follow the camera for some minimal UI
     this.woodText.setScrollFactor(0);
@@ -231,8 +228,7 @@ class Game extends Phaser.Scene {
 
   // update()
   //
-  //
-  //
+  //updates the elves and the detection boxes
 
   update() {
     for (let i = 0; i < this.unitArray.length; i++) {
@@ -258,7 +254,7 @@ class Game extends Phaser.Scene {
   //according to a given velocity and returns time
 
   getTime(object, destination, velocity) {
-    let distance = Phaser.Math.Distance.Between(object.body.x, object.body.y, this.cameras.main.getWorldPoint(destination.x,destination.y).x, this.cameras.main.getWorldPoint(destination.x,destination.y).y);
+    let distance = Phaser.Math.Distance.Between(object.body.x, object.body.y, this.cameras.main.getWorldPoint(destination.x, destination.y).x, this.cameras.main.getWorldPoint(destination.x, destination.y).y);
     //console.log(object.body.x, object.body.y, destination.worldX, destination.worldY);
     let time = distance / velocity;
     //console.log("getTime: " + time, distance, velocity);
@@ -308,8 +304,8 @@ class Game extends Phaser.Scene {
       //console.log(unit.scene.ELF_SPEED, t);
       //console.log("time inside getTime: " + t);
     }
-    if(unit.health < 0){
-      box.elf.setVelocity(0,0);
+    if (unit.health < 0) {
+      box.elf.setVelocity(0, 0);
     }
   }
 
@@ -328,8 +324,8 @@ class Game extends Phaser.Scene {
     //managing the elf or the unit when it is dying
     if (unit.health <= 0) {
       elf.body.setVelocity(0, 0);
-      if(this.currentUnit =! null){
-         this.currentUnit = null
+      if (this.currentUnit = !null) {
+        this.currentUnit = null
       }
       //removing this unit from its group and getting destroying it
       this.units.remove(unit);
@@ -352,6 +348,40 @@ class Game extends Phaser.Scene {
       this.elfScreamSFX.play();
       //stopping the fight sound because the elf is dead
       this.fightSFX.pause();
+    }
+  }
+
+  //moveUnit(pointer)
+  //
+  //called when a unit is already selected. Gets the time of the displacement
+  //of the unit to the destination and moves it there. Once it is arrived,
+  //it deselects the unit, stops it and puts its color back to normal
+
+  moveUnit(pointer) {
+    //console.log(pointer);
+    if (this.currentUnit === null) { //supposed to solve the error saying that cannot read property velocity of undefined of 3 lines below!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      console.log("in null");
+      return;
+    }
+    if (this.isCurrentUnit === true) {
+      if (this.currentUnit.body.velocity.x === 0 && this.currentUnit.body.velocity.y === 0) {
+        //getting the time for the displacement of the unit and for the tiemout
+        let t = this.getTime(this.currentUnit, pointer, this.UNIT_SPEED);
+        //moving the object at the given time and speed
+        this.physics.moveTo(this.currentUnit, pointer.worldX, pointer.worldY, this.scene.UNIT_SPEED, t); //need to solve the speed here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        console.log(this.UNIT_SPEED, t)
+        //when the unit has arrived
+        setTimeout(() => {
+          if (this.currentUnit === null) {
+            return;
+          }
+          this.isCurrentUnit = false;
+          this.currentUnit.body.setVelocity(0, 0);
+          this.currentUnit.clearTint();
+          this.currentUnit = null;
+          //THERE WAS SOMETHING TO SOLVE HERE with the overlap or SOMETHING^^^^^^^^^^^^^????????????????????????????????????????????????????????????????????????????????????????????????
+        }, t)
+      }
     }
   }
 }
