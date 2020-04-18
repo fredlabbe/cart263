@@ -323,9 +323,11 @@ class Game extends Phaser.Scene {
     elf.health -= unit.damage;
     //managing the elf or the unit when it is dying
     if (unit.health <= 0) {
+      //stopping the elf
       elf.body.setVelocity(0, 0);
-      if (this.currentUnit = !null) {
+      if (this.currentUnit !== null) {
         this.currentUnit = null
+        this.isCurrentUnit = false;
       }
       //removing this unit from its group and getting destroying it
       this.units.remove(unit);
