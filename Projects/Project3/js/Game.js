@@ -210,9 +210,9 @@ class Game extends Phaser.Scene {
       }, this);
     }
 
-    //managing the overlap between the units and the trees so the player collects wood
-    this.physics.add.overlap(this.units, this.trees, this.collectWood, null, this);
 
+    //managing the overlap between the units and the trees so the player collects wood
+    //this.physics.add.overlap(this.units, this.trees, this.collectWood, null, this);
     this.isOverlappingTree = this.physics.world.overlap(this.units, this.trees);
 
     //the text displaying the wood
@@ -247,6 +247,35 @@ class Game extends Phaser.Scene {
 
   }
 
+  // collectWood()
+  //
+  //Called when a unit overlaps a tree. When it does,  it takes a certain amount
+  //of time before the wood is collected and the tree disappears.
+
+  // collectWood(unit, tree) {
+  //
+  //   if (unit.body.velocity.x === 0 && unit.body.velocity.y === 0) {
+  //     //this.currentTree = tree;
+  //     tree.resourceAmt -= unit.scene.CHOP_AMT;
+  //     this.chopSFX.play();
+  //     console.log("chop chop");
+  //   }
+  //   if (tree.resourceAmt <= 0) {
+  //     unit.scene.wood += unit.scene.WOOD_COLLECT;
+  //     unit.scene.woodText.setText(`Wood: ${unit.scene.wood}`);
+  //     tree.destroy();
+  //     this.chopSFX.pause();
+  //     //this.currentTree = null;
+  //   }
+  //   //checking if the unit is killed while chopping wood
+  //   if (unit.health <= 0) {
+  //     console.log("dead");
+  //     //pausing the chopping sound
+  //     this.chopSFX.pause();
+  //   }
+  //
+  // }
+
   // getTime(object, destination)
   //
   //v = d/t => t = d/v
@@ -259,32 +288,6 @@ class Game extends Phaser.Scene {
     let time = distance / velocity;
     //console.log("getTime: " + time, distance, velocity);
     return time;
-  }
-
-  // collectWood()
-  //
-  //Called when a unit overlaps a tree. When it does,  it takes a certain amount
-  //of time before the wood is collected and the tree disappears.
-
-  collectWood(unit, tree) {
-
-    if (unit.body.velocity.x === 0 && unit.body.velocity.y === 0) {
-      tree.resourceAmt -= unit.scene.CHOP_AMT;
-      this.chopSFX.play();
-    }
-    if (tree.resourceAmt <= 0) {
-      unit.scene.wood += unit.scene.WOOD_COLLECT;
-      unit.scene.woodText.setText(`Wood: ${unit.scene.wood}`);
-      tree.destroy();
-      this.chopSFX.pause();
-    }
-    //checking if the unit is killed while chopping wood
-    if (unit.health < 1) {
-      console.log("dead");
-      //pausing the chopping sound
-      this.chopSFX.pause();
-    }
-
   }
 
   // chaseUnits(unit,box)
