@@ -19,18 +19,27 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     this.damage = 0.25;
     //setting the scene
     this.scene = scene;
+
     this.barX = this.x;
     this.barY = this.y - 20;
-    this.scene = scene;
+
+    //the amount of time it take before collecting wood
+    this.WOOD_TIME = 2000;
+    //the amount of wood collected after the set collecting time
+    this.WOOD_COLLECT = 10;
+    //how many woods are chopping for every frame from the total ressourceAmt of the tree
+    this.CHOP_AMT = 0.5;
 
     this.currentTree = null;
+
     //setting the unit interactive so it can be clicked
     this.setInteractive();
     //setting the scale of the unit down because if not it will be way too big
     this.setScale(0.05);
 
     //managing the overlap between the units and the trees so the player collects wood
-    this.scene.physics.add.overlap(this, this.trees, this.collectWood, null, scene);
+    this.scene.physics.add.overlap(this, this.scene.trees, this.collectWood, null);
+    this.isOverlappingTree = false;
 
 
     //when the user clicks on the unit, it sets its tint to be a little darker
@@ -38,7 +47,6 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     this.on('pointerdown', (pointer) => {
       if(this.scene.isCurrentUnit === false){
         this.scene.isCurrentUnit = true;
-      console.log("clicking on the unit works");
       //setting the tint to be a little darker
       this.setTint(0xc1c1c1);
       this.isClicked = true;
@@ -48,6 +56,11 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     });
   }
   update(){
+
+    console.log(this.isOverlappingTree);
+    if(!this.isOverlappingTree || this.health <= 0){
+      this.scene.chopSFX.pause();
+    }
     // let healthSize;
     // healthSize = map(this.health, 0, this.maxHealth, 0, 50);
     // push();
@@ -69,26 +82,27 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
   //Called when a unit overlaps a tree. When it does,  it takes a certain amount
   //of time before the wood is collected and the tree disappears.
 
-  collectWood(tree) {
-    console.log("in collectWood");
-    if (this.body.velocity.x === 0 && this.body.velocity.y === 0) {
+  collectWood(unit,tree) {
+    if (unit.body.velocity.x === 0 && unit.body.velocity.y === 0) {
+      tree.resourceAmt -= unit.CHOP_AMT;
       this.currentTree = tree;
-      tree.resourceAmt -= this.scene.CHOP_AMT;
-      this.scene.chopSFX.play();
-      console.log("chop chop");
+      unit.scene.chopSFX.play();
+      this.isOverlappingTree = true;
+      console.log(this.isOverlappingTree);
     }
     if (tree.resourceAmt <= 0) {
-      this.scene.wood += this.scene.WOOD_COLLECT;
-      this.scene.woodText.setText(`Wood: ${this.scene.wood}`);
+      //this.isOverlappingTree = false;
+      unit.scene.wood += unit.WOOD_COLLECT;
+      unit.scene.woodText.setText(`Wood: ${unit.scene.wood}`);
       tree.destroy();
-      this.scene.chopSFX.pause();
+      unit.scene.chopSFX.pause();
       this.currentTree = null;
     }
     //checking if the unit is killed while chopping wood
-    if (this.health <= 0) {
+    if (unit.health <= 0) {
       console.log("dead");
       //pausing the chopping sound
-      this.scene.chopSFX.pause();
+      unit.scene.chopSFX.pause();
     }
 
   }

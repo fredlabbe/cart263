@@ -64,17 +64,16 @@ class Game extends Phaser.Scene {
     this.UNIT_COST = 10;
     //the wood the player has. It is acquired by making a worker cut trees
     this.wood = 30;
-    //the amount of time it take before collecting wood
-    this.WOOD_TIME = 2000;
-    //the amount of wood collected after the set collecting time
-    this.WOOD_COLLECT = 10;
-    //how many woods are chopping for every frame from the total ressourceAmt of the tree
-    this.CHOP_AMT = 0.5;
+    // //the amount of time it take before collecting wood
+    // this.WOOD_TIME = 2000;
+    // //the amount of wood collected after the set collecting time
+    // this.WOOD_COLLECT = 10;
+    // //how many woods are chopping for every frame from the total ressourceAmt of the tree
+    // this.CHOP_AMT = 0.5;
     //the text displaying the wood
     this.woodText;
 
     this.isCurrentUnit = false;
-    this.isOverlappingTree;
 
     // The screaming in pain sound for when friendly unit dies
     this.friendlyScreamSFX = new Audio("assets/sounds/scream.mp3");
@@ -213,7 +212,6 @@ class Game extends Phaser.Scene {
 
     //managing the overlap between the units and the trees so the player collects wood
     //this.physics.add.overlap(this.units, this.trees, this.collectWood, null, this);
-    this.isOverlappingTree = this.physics.world.overlap(this.units, this.trees);
 
     //the text displaying the wood
     this.woodText = this.add.text(20, 20, `Wood: ${this.wood}`, {
@@ -240,10 +238,9 @@ class Game extends Phaser.Scene {
       enemy.update();
     }, this);
 
-    console.log(this.isOverlappingTree);
-    // this.units.children.each(function(ally) {
-    //   ally.update();
-    // }, this);
+    this.units.children.each(function(ally) {
+      ally.update();
+    }, this);
 
   }
 
