@@ -87,10 +87,12 @@ class Game extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, this.boundX, this.boundY);
 
     //playing the music not too loud and looping it
-    //this.musicSFX.play();
+    this.musicSFX.play();
     this.musicSFX.volume = 0.1;
+    //looping the SFXs
     this.musicSFX.loop = true;
     this.chopSFX.loop = true;
+    this.fightSFX.loop = true;
     //lowering the volumes of certain sounds
     this.chopSFX.volume = 0.3;
     this.fightSFX.volume = 0.3;
@@ -210,17 +212,13 @@ class Game extends Phaser.Scene {
     this.elves.children.each(function(enemy) {
       enemy.update();
     }, this);
-
-    this.units.children.each(function(ally) {
-      ally.update();
-    }, this);
     //if there are no more elves, game over
     if (this.numberOfElves <= 0) {
       this.scene.start('GameOver');
       this.chopSFX.pause();
     }
     //if there are no more units and no more wood to produce more, game over
-    if (this.numberOfUnits <= 0 && this.wood < 0) {
+    if (this.numberOfUnits <= 0 && this.wood <= 0) {
       this.scene.start('GameOver');
       this.chopSFX.pause();
     }

@@ -49,16 +49,6 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
-  //update()
-  //
-  //
-
-  update() {
-
-    //this.healthBar();
-
-  }
-
   // collectWood()
   //
   //Called when a unit overlaps a tree. When it does,  it takes a certain amount
