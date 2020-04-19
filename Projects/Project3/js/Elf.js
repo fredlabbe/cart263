@@ -26,10 +26,7 @@ class Elf extends Phaser.Physics.Arcade.Sprite {
     this.detectionBox.elf = this;
 
     //the overlaps of detection boxes and units
-    this.scene.physics.add.overlap(this.detectionBox,this.scene.units, this.chaseUnits, null);
-
-    this.currentTarget = null;
-
+    this.scene.physics.add.overlap(this.detectionBox, this.scene.units, this.chaseUnits, null);
   }
 
   // update()
@@ -46,19 +43,17 @@ class Elf extends Phaser.Physics.Arcade.Sprite {
   // moves the elf according to the unit when it has been in the detection box
 
   chaseUnits(box, unit) {
-    //console.log(box.elf);
+    //as long as both of them are still alive
     if (box.elf.health > 0 && unit.health > 0) {
+      //getting the time to go there
       let t = unit.scene.getTime(box.elf, unit, unit.scene.ELF_SPEED);
+      //moving the elf
       unit.scene.physics.moveToObject(box.elf, unit, unit.scene.ELF_SPEED, t);
-      console.log(unit.scene.ELF_SPEED, t);
     }
-    //stopping the elves right before killing the unit
-    if (unit.health < 5 ) {
+    //stopping the elves right before killing the unit (they will still have time
+    //to kill it because the value is so small)
+    if (unit.health < 5) {
       box.elf.setVelocity(0, 0);
     }
   }
-
-
-
-
 }

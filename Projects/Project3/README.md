@@ -1,9 +1,9 @@
-#**Artist's statement**
+**#Artist's statement**
 Project 3 Cart263
 Frederick Labbe
 
-#**Dusk of Conquests**
+**#Dusk of Conquests**
 After having only B pluses for the last 2 projects, I really wanted to push myself for the last one to have an A. I wanted to do something different, something hard, something that has not really been done previously with Phaser 3. My two favorite types of games are RPGs/MMORPGs and RTSs. I realized that there was only 1 finished Phaser 3 RTS game, and the code is not public. Therefore, there was my challenge. After researching more about this type of game, I realized that the reason why not a lot of people attempted to do this type of game was because it is one of the hardest ones to program. There are a lot of things that do not come with Phaser, for example Pathfinding, follow other players, line of sight, radius detection, AI, combat, etc. Therefore, I decided that only the player was going to have a base that can produce units, and the enemies would just be spread in the map and the goal of the game would be to eliminate all of them. The idea of the universe of this game is based on a book that I have been writing for 9 years now, a medieval fantasy. This game is based around an era where elves conquered everything, so humans revolt and try to gain their freedom back, hence the name "The Dusk of Conquests" comes from the fact that the end of the Elves' conquests is near. This has lead to the idea of starting with only a base and then growing it and becoming a full fledge kingdom, like many mobile games around app stores. However, since it is pretty hard to do alone, I was going to program an early draft of an RTS, because that alone is pretty complex.
 
 
-wasnt able to check overlap, 
+wasnt able to check overlap,

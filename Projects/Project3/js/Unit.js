@@ -7,7 +7,6 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, texture);
     //adding it to the scene
     scene.add.existing(this);
-    scene.physics.add.existing(this);
     //enabling the physics
     scene.physics.world.enableBody(this);
     //knowing when this unit is clicked
@@ -35,7 +34,7 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     this.setScale(0.05);
     //managing the overlap between the units and the trees so the player collects wood
     this.scene.physics.add.overlap(this, this.scene.trees, this.collectWood, null);
-
+    //managing clicks on the unit
     //when the user clicks on the unit, it sets its tint to be a little darker
     //so we know it's selected and sets the current unit selected to this one
     this.on('pointerdown', (pointer) => {
@@ -57,10 +56,6 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
   update() {
 
     //this.healthBar();
-    // console.log(this.isOverlappingTree);
-    // if(!this.isOverlappingTree && this.scene.chopSFX.isPlaying || this.health <= 0 && this.scene.chopSFX.isPlaying){
-    //   this.scene.chopSFX.pause();
-    // }
 
   }
 
@@ -70,7 +65,8 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
   //of time before the wood is collected and the tree disappears.
 
   collectWood(unit, tree) {
-    //if the unit doesn't move, chops the wood and plays the sound
+    //if the unit doesn't move, chops the wood and plays the sound as long as it
+    //is not already playing
     if (unit.body.velocity.x === 0 && unit.body.velocity.y === 0) {
       tree.resourceAmt -= unit.CHOP_AMT;
       if (!unit.scene.chopSFX.isPlaying) {
@@ -86,15 +82,17 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     //and stops playing the sound
     if (tree.resourceAmt <= 0) {
       unit.scene.wood += unit.WOOD_COLLECT;
+      //displaying the updated text
       unit.scene.woodText.setText(`Wood: ${unit.scene.wood}`);
+      //removing this tree from the group and destroying it
       unit.scene.trees.remove(tree);
       tree.destroy();
+      //stopping the sound
       unit.scene.chopSFX.pause();
     }
     //checking if the unit is killed while chopping wood,
     //stopping it right before being killed
     if (unit.health < 10) {
-      console.log("dead");
       //pausing the chopping sound
       unit.scene.chopSFX.pause();
     }
