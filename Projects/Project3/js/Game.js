@@ -29,6 +29,7 @@ class Game extends Phaser.Scene {
   //init(data)
   //initializing all the data of this scene
   init(data) {
+    //the background image empty for now
     this.background;
     //the bounds
     this.mapLimit = 2000;
@@ -253,7 +254,7 @@ class Game extends Phaser.Scene {
       this.chopSFX.pause();
     }
     //if there are no more units and no more wood to produce more, game over
-    if(this.numberOfUnits <= 0 && this.wood < 10){
+    if(this.numberOfUnits <= 0 && this.wood === 0){
       this.scene.start('GameOver');
       this.chopSFX.pause();
     }
