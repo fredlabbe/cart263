@@ -10,7 +10,7 @@ and enslaving humans.
 
 A basic draft of an RTS game where the player has to gather resources to build
 an army and kill the opponents. The game is won when all Elves have been
-eradicated.  
+eradicated.
 
 ******************/
 //setting up the configuration of the game
@@ -31,7 +31,7 @@ var config = {
     }
   },
   //the scenes in the game
-  scene: [Preloader, Menu, Narrative, Game]
+  scene: [Preloader, Menu, Narrative, Game, GameOver]
 };
 
 // creating the game itself

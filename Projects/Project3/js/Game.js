@@ -46,22 +46,29 @@ class Game extends Phaser.Scene {
     this.elves;
     this.elfDetections;
     this.trees;
+    this.elvesLength;
     //the speeds of the characters
     this.ELF_SPEED = 0.05;
     this.UNIT_SPEED = 0.1;
     //the total number of elves in the game
     this.numberOfElves = 15;
+    //the constant for the area the elves randomly appear in
+    this.ELVES_AREA = 200;
     //the x and y values for the area in which the elves will be clustered
     this.elvesClusterY = 600;
-    this.elvesClusterX = this.elvesClusterY + 200;
+    this.elvesClusterX = this.elvesClusterY + this.ELVES_AREA;
     //the time it takes for a unit to appear in ms
     this.UNIT_TIME = 2000;
     //the total number of trees in the map
     this.numberOfTrees = 55;
+    //the area where trees fall in when they previously have fallen on the base
+    this.TREE_AREA_X = 800;
+    this.TREE_AREA_Y = 100;
     //the array of units
     this.unitArray = [];
     //the cost for creating a unit
     this.UNIT_COST = 10;
+    this.numberOfUnits = 0;
     //the wood the player has. It is acquired by making a worker cut trees
     this.wood = 30;
     // //the amount of time it take before collecting wood
@@ -87,6 +94,8 @@ class Game extends Phaser.Scene {
     this.musicSFX = new Audio("assets/sounds/celticMusic.mp3");
 
 
+
+
   }
 
   // preload()
@@ -110,6 +119,7 @@ class Game extends Phaser.Scene {
     //this.musicSFX.play();
     this.musicSFX.volume = 0.1;
     this.musicSFX.loop = true;
+    this.chopSFX.loop = true;
     //lowering the volumes of certain sounds
     this.chopSFX.volume = 0.3;
     this.fightSFX.volume = 0.3;
@@ -137,6 +147,7 @@ class Game extends Phaser.Scene {
         setTimeout(() => {
           this.scene.base.setTint(0xffffff);
           let unit = new Worker(this.scene, 250, 250, 'knight');
+          this.scene.numberOfUnits++;
           this.scene.unitArray.push(unit);
           this.scene.units.add(unit);
           //constraining the elf to the limits of the map
@@ -158,8 +169,8 @@ class Game extends Phaser.Scene {
       let randY = this.boundY * Math.random();
       //if the random coordinates fall on the base, put elsewhere
       if(randX < this.baseX + this.baseSize && randY < this.baseY + this.baseSize){
-        randX = 800 * Math.random();
-        randY = 100 * Math.random();
+        randX = this.TREE_AREA_X * Math.random();
+        randY = this.TREE_AREA_Y * Math.random();
       }
       let tree = new Tree(this, randX, randY, 'tree');
       this.trees.add(tree);
@@ -168,12 +179,13 @@ class Game extends Phaser.Scene {
     this.elfDetections = this.physics.add.group({});
     //grouping the elves together
     this.elves = this.physics.add.group({});
+    this.elvesLength = this.elves.getLength();
     //displaying the elves randomly but together in a definite area and adding
     //them to the elves group along with the detection boxes
     for (let i = 0; i < this.numberOfElves; i++) {
       //getting random values for x and y
-      let randX = 200 * Math.random() + this.elvesClusterX;
-      let randY = 200 * Math.random() + this.elvesClusterY;
+      let randX = this.ELVES_AREA * Math.random() + this.elvesClusterX;
+      let randY = this.ELVES_AREA * Math.random() + this.elvesClusterY;
       //creating the elf
       let elf = new Elf(this, randX, randY, 'elf');
       //adding this elf to the group of elves
@@ -193,8 +205,8 @@ class Game extends Phaser.Scene {
       console.log(pointer.x,pointer.y);
       this.moveUnit(pointer);
     });
-    //as long as a unit is clicked
-    if (this.currentUnit = !null) {
+    // //as long as a unit is clicked
+    // if (this.currentUnit = !null) {
       //going through each tree and when one is clicked, moves the unit there
       this.trees.children.each(function(tree) {
         tree.on('pointerdown', (pointer) => {
@@ -207,7 +219,7 @@ class Game extends Phaser.Scene {
           this.moveUnit(pointer);
         });
       }, this);
-    }
+    //}
 
 
     //managing the overlap between the units and the trees so the player collects wood
@@ -231,6 +243,7 @@ class Game extends Phaser.Scene {
   update() {
     for (let i = 0; i < this.unitArray.length; i++) {
       let element = this.unitArray[i];
+      // element.healthBar();
 
     }
     //https://www.html5gamedevs.com/topic/36580-best-way-to-apply-a-method-to-all-elements-in-a-group/
@@ -242,6 +255,14 @@ class Game extends Phaser.Scene {
       ally.update();
     }, this);
 
+    if(this.numberOfElves <= 0){
+      this.scene.start('GameOver');
+      this.chopSFX.pause();
+    }
+    if(this.numberOfUnits <= 0 && this.wood < 10){
+      this.scene.start('GameOver');
+      this.chopSFX.pause();
+    }
   }
 
   // collectWood()
@@ -338,6 +359,7 @@ class Game extends Phaser.Scene {
       this.friendlyScreamSFX.play();
       //stopping the fight sound because the unit is dead
       this.fightSFX.pause();
+      this.numberOfUnits--;
     }
     if (elf.health <= 0) {
       //resetting the elf's body
@@ -350,6 +372,8 @@ class Game extends Phaser.Scene {
       this.elfScreamSFX.play();
       //stopping the fight sound because the elf is dead
       this.fightSFX.pause();
+      //decreasing the number of elves
+      this.numberOfElves--;
     }
   }
 

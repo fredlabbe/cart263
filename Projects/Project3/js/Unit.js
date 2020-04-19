@@ -45,36 +45,29 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     //when the user clicks on the unit, it sets its tint to be a little darker
     //so we know it's selected and sets the current unit selected to this one
     this.on('pointerdown', (pointer) => {
-      if(this.scene.isCurrentUnit === false){
+      if (this.scene.isCurrentUnit === false) {
         this.scene.isCurrentUnit = true;
-      //setting the tint to be a little darker
-      this.setTint(0xc1c1c1);
-      this.isClicked = true;
-      //setting the current unit selected to this one
-      this.scene.currentUnit = this;
-    }
+        //setting the tint to be a little darker
+        this.setTint(0xc1c1c1);
+        this.isClicked = true;
+        //setting the current unit selected to this one
+        this.scene.currentUnit = this;
+      }
     });
   }
-  update(){
 
-    console.log(this.isOverlappingTree);
-    if(!this.isOverlappingTree || this.health <= 0){
-      this.scene.chopSFX.pause();
-    }
-    // let healthSize;
-    // healthSize = map(this.health, 0, this.maxHealth, 0, 50);
-    // push();
-    // //centering the rectangle
-    // rectMode(CENTER);
-    // //dark red color
-    // fill(125, 37, 32);
-    // //creating the red rectangle
-    // rect(this.barX, this.barY, 50, 10);
-    // //the green color
-    // fill(60, 94, 55);
-    // //creating the rectangle that is mapped, the green one, the life
-    // rect(this.barX, this.barY, healthSize, 10);
-    // pop();
+  //update()
+  //
+  //
+
+  update() {
+
+    //this.healthBar();
+    // console.log(this.isOverlappingTree);
+    // if(!this.isOverlappingTree && this.scene.chopSFX.isPlaying || this.health <= 0 && this.scene.chopSFX.isPlaying){
+    //   this.scene.chopSFX.pause();
+    // }
+
   }
 
   // collectWood()
@@ -82,28 +75,53 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
   //Called when a unit overlaps a tree. When it does,  it takes a certain amount
   //of time before the wood is collected and the tree disappears.
 
-  collectWood(unit,tree) {
+  collectWood(unit, tree) {
     if (unit.body.velocity.x === 0 && unit.body.velocity.y === 0) {
       tree.resourceAmt -= unit.CHOP_AMT;
       this.currentTree = tree;
-      unit.scene.chopSFX.play();
-      this.isOverlappingTree = true;
-      console.log(this.isOverlappingTree);
+      if (!unit.scene.chopSFX.isPlaying) {
+        unit.scene.chopSFX.play();
+      }
+      //this.isOverlappingTree = true;
+      //console.log(this.isOverlappingTree);
     }
     if (tree.resourceAmt <= 0) {
       //this.isOverlappingTree = false;
       unit.scene.wood += unit.WOOD_COLLECT;
       unit.scene.woodText.setText(`Wood: ${unit.scene.wood}`);
+      unit.scene.trees.remove(tree);
       tree.destroy();
       unit.scene.chopSFX.pause();
       this.currentTree = null;
     }
-    //checking if the unit is killed while chopping wood
-    if (unit.health <= 0) {
+    //checking if the unit is killed while chopping wood,
+    //stopping it right before being killed
+    if (unit.health < 10) {
       console.log("dead");
       //pausing the chopping sound
       unit.scene.chopSFX.pause();
     }
 
+    if(unit.body.velocity.x !== 0 && unit.body.velocity.y !== 0){
+      unit.scene.chopSFX.pause();
+
+    }
+  }
+
+  healthBar() {
+    let healthSize;
+    healthSize = map(this.health, 0, this.maxHealth, 0, 50);
+    push();
+    //centering the rectangle
+    rectMode(CENTER);
+    //dark red color
+    fill(125, 37, 32);
+    //creating the red rectangle
+    rect(this.barX, this.barY, 50, 10);
+    //the green color
+    fill(60, 94, 55);
+    //creating the rectangle that is mapped, the green one, the life
+    rect(this.barX, this.barY, healthSize, 10);
+    pop();
   }
 }
