@@ -29,18 +29,12 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
     this.WOOD_COLLECT = 10;
     //how many woods are chopping for every frame from the total ressourceAmt of the tree
     this.CHOP_AMT = 0.5;
-
-    this.currentTree = null;
-
     //setting the unit interactive so it can be clicked
     this.setInteractive();
     //setting the scale of the unit down because if not it will be way too big
     this.setScale(0.05);
-
     //managing the overlap between the units and the trees so the player collects wood
     this.scene.physics.add.overlap(this, this.scene.trees, this.collectWood, null);
-    this.isOverlappingTree = false;
-
 
     //when the user clicks on the unit, it sets its tint to be a little darker
     //so we know it's selected and sets the current unit selected to this one
@@ -76,23 +70,26 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
   //of time before the wood is collected and the tree disappears.
 
   collectWood(unit, tree) {
+    //if the unit doesn't move, chops the wood and plays the sound
     if (unit.body.velocity.x === 0 && unit.body.velocity.y === 0) {
       tree.resourceAmt -= unit.CHOP_AMT;
-      this.currentTree = tree;
       if (!unit.scene.chopSFX.isPlaying) {
         unit.scene.chopSFX.play();
       }
-      //this.isOverlappingTree = true;
-      //console.log(this.isOverlappingTree);
     }
+    //if the unit is moving and overlapping the tree, pause the sound, so when
+    //it has left, it will not be played anymore
+    else {
+      unit.scene.chopSFX.pause();
+    }
+    //if the tree is empty of resources, add 10 wood to current amount of wood
+    //and stops playing the sound
     if (tree.resourceAmt <= 0) {
-      //this.isOverlappingTree = false;
       unit.scene.wood += unit.WOOD_COLLECT;
       unit.scene.woodText.setText(`Wood: ${unit.scene.wood}`);
       unit.scene.trees.remove(tree);
       tree.destroy();
       unit.scene.chopSFX.pause();
-      this.currentTree = null;
     }
     //checking if the unit is killed while chopping wood,
     //stopping it right before being killed
@@ -100,11 +97,6 @@ class Worker extends Phaser.Physics.Arcade.Sprite {
       console.log("dead");
       //pausing the chopping sound
       unit.scene.chopSFX.pause();
-    }
-
-    if(unit.body.velocity.x !== 0 && unit.body.velocity.y !== 0){
-      unit.scene.chopSFX.pause();
-
     }
   }
 

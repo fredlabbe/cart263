@@ -71,12 +71,6 @@ class Game extends Phaser.Scene {
     this.numberOfUnits = 0;
     //the wood the player has. It is acquired by making a worker cut trees
     this.wood = 30;
-    // //the amount of time it take before collecting wood
-    // this.WOOD_TIME = 2000;
-    // //the amount of wood collected after the set collecting time
-    // this.WOOD_COLLECT = 10;
-    // //how many woods are chopping for every frame from the total ressourceAmt of the tree
-    // this.CHOP_AMT = 0.5;
     //the text displaying the wood
     this.woodText;
 
@@ -195,8 +189,7 @@ class Game extends Phaser.Scene {
       //constraining the elf to the limits of the map
       elf.setCollideWorldBounds(true);
     }
-    //the overlaps of detection boxes and units and the one of elves and units
-    this.physics.add.overlap(this.units, this.elfDetections, this.chaseUnits, null, this);
+    // the overlap of elves and units
     this.physics.add.overlap(this.units, this.elves, this.fight, null, this);
 
 
@@ -254,11 +247,12 @@ class Game extends Phaser.Scene {
     this.units.children.each(function(ally) {
       ally.update();
     }, this);
-
+    //if there are no more elves, game over
     if(this.numberOfElves <= 0){
       this.scene.start('GameOver');
       this.chopSFX.pause();
     }
+    //if there are no more units and no more wood to produce more, game over
     if(this.numberOfUnits <= 0 && this.wood < 10){
       this.scene.start('GameOver');
       this.chopSFX.pause();
@@ -306,28 +300,6 @@ class Game extends Phaser.Scene {
     let time = distance / velocity;
     //console.log("getTime: " + time, distance, velocity);
     return time;
-  }
-
-  // chaseUnits(unit,box)
-  //
-  // moves the elf according to the unit when it has been in the detection box
-
-  chaseUnits(unit, box) {
-    //console.log(unit, box);
-    if (box.elf.health > 0 && unit.health > 0) {
-      //reusing the code because of worldX and worldY not working for an object instead of a pointer
-      let distance = Phaser.Math.Distance.Between(box.elf.body.x, box.elf.body.y, unit.x, unit.y);
-      let time = distance / unit.scene.ELF_SPEED;
-      //console.log("time inside chaseUnits: " + time);
-
-      let t = this.getTime(box.elf, unit, unit.scene.ELF_SPEED);
-      unit.scene.physics.moveToObject(box.elf, unit, unit.scene.ELF_SPEED, t);
-      //console.log(unit.scene.ELF_SPEED, t);
-      //console.log("time inside getTime: " + t);
-    }
-    if (unit.health < 0) {
-      box.elf.setVelocity(0, 0);
-    }
   }
 
   //fight(unit,elf)
